@@ -33,7 +33,7 @@
 5. Hit the save&#38;load button, then click on the simulation and press (w) to run it. The behavior should mimic the line follower program, unless you change the code.<br/><br/>
 6. Change the code! See the Simuware tab for some useful functions.<br/><br/>
 7. Hit the load button at any point to reload the custom program. You can reload it even while the program is running in the simulation.<br/><br/>
-TODO: <del>use local storage to save</del>, write a particle filter program, <del>show simuware API</del>, add print to use console tab, add time to API, add revert-to-default-prog btn
+TODO: <del>use local storage to save</del>, write a particle filter program, <del>show simuware API</del>, <del>add print to use console tab</del>, <del>add time to API</del>, add revert-to-default-prog btn
 		</div>
 		<div class="tabbertab text_tab" title="Program">
 			<div class="code_header">Custom Program</div>
@@ -51,7 +51,8 @@ function draw() {
 	ctx.fillStyle = "rgba(0, 0, 200, 0.5)";  
 	ctx.fillRect(30, 30, 110, 100);
 }</textarea>
-			<button id="loadBtn">save &#38; load</button>
+			<button class="prog_btn" id="revertBtn">revert to default</button>
+			<button class="prog_btn" id="loadBtn">save &#38; load</button>
 		</div>
 		<div class="tabbertab text_tab" title="Simuware">
 			<div class="code_header">Simuware API</div>
@@ -73,10 +74,10 @@ function setMotorPowers(pow1, pow2);
 function getTime();
 
 // TODO: prints to "console"
-function print(str);</textarea>
+function log(str);</textarea>
 		</div>
 		<div class="tabbertab text_tab" title="Console">
-This will be a console to output stuff!
+<textarea id="console_textarea" rows=46 cols=59 readonly="readonly" wrap="off"></textarea>
 		</div>
 		</div>
 	</div>

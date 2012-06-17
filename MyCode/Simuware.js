@@ -29,6 +29,6 @@ function getTime() {
 }
 
 // TODO: prints to "console"
-function print(str) {
-	
+function log(str) {
+	document.getElementById("console_textarea").value += str;
 }
