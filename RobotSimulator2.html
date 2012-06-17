@@ -30,14 +30,14 @@
 2. Notice the encoder, distance, and line sensor readings.<br/><br/>
 3. Try out the line-following program (a) and the left-wall-following program (s).<br/><br/>
 4. Go to the Program tab to see code for a custom program you can write (in javascript). By default it'll be the same code as the line follower program.<br/><br/>
-5. Hit the load button, then click on the simulation and press (w) to run it. The behavior should mimic the line follower program.<br/><br/>
-6. Now edit the code! See the Simuware tab for some useful functions.<br/><br/>
+5. Hit the save&#38;load button, then click on the simulation and press (w) to run it. The behavior should mimic the line follower program, unless you change the code.<br/><br/>
+6. Change the code! See the Simuware tab for some useful functions.<br/><br/>
 7. Hit the load button at any point to reload the custom program. You can reload it even while the program is running in the simulation.<br/><br/>
-TODO: use local storage to save, write a particle filter program, show simuware API, add printf to use console tab, add time to API
+TODO: <del>use local storage to save</del>, write a particle filter program, <del>show simuware API</del>, add print to use console tab, add time to API, add revert-to-default-prog btn
 		</div>
 		<div class="tabbertab text_tab" title="Program">
-			<div id="prog_header">Custom Program</div>
-			<textarea id="textarea">
+			<div class="code_header">Custom Program</div>
+			<textarea id="prog_textarea">
 function draw() {
 	var canvas = document.getElementById("canvas"); 
 	var ctx = canvas.getContext("2d");  
@@ -51,10 +51,29 @@ function draw() {
 	ctx.fillStyle = "rgba(0, 0, 200, 0.5)";  
 	ctx.fillRect(30, 30, 110, 100);
 }</textarea>
-			<button id="loadBtn">load</button>
+			<button id="loadBtn">save &#38; load</button>
 		</div>
 		<div class="tabbertab text_tab" title="Simuware">
-This will be a list of some useful functions!
+			<div class="code_header">Simuware API</div>
+			<textarea id="simuware_textarea">
+// returns booleans [s1,s2,s3,s4,s5,s6,s7,s8]
+function readLineSensor();
+
+// returns [left, center, right]
+function readDistSensors();
+
+// returns [left enc, right enc]
+function readEncoders();
+
+// expects powi to be range [-1,1]
+// expecting pow1=left, pow2=right
+function setMotorPowers(pow1, pow2);
+
+// returns # of milliseconds since 1974ish
+function getTime();
+
+// TODO: prints to "console"
+function print(str);</textarea>
 		</div>
 		<div class="tabbertab text_tab" title="Console">
 This will be a console to output stuff!

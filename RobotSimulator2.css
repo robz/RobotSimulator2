@@ -16,7 +16,7 @@
 	height: 640px;
 }
 
-#prog_header {
+.code_header {
 	text-align: center;
 	font-size: 20px;
 	font-family: "Courier New", Courier, sans-serif;

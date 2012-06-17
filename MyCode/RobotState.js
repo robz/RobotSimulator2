@@ -26,6 +26,9 @@ function makeState(xs, ys, thetas, ds) {
 			var x2 = this.x, y2 = this.y, theta2 = this.theta, 
 				x = this.x, y = this.y, theta = this.theta, d = this.d;
 				
+			w1 = round4(w1);
+			w2 = round4(w2);
+			
 			this.totalw1 += w1;
 			this.totalw2 += w2;
 			
@@ -94,19 +97,19 @@ function makeState(xs, ys, thetas, ds) {
 				while(true);
 			}
 			
+			// checc for obstacles
 			robotPolys = this.createRobotPolys(x2,y2,theta2);
 			for(var j = 0; j < obstPolys.length; j++) {
 				for(var i = 0; i < robotPolys.length; i++)
-					if(polysIntersect(robotPolys[i], obstPolys[j]))
+					if(polysIntersect(robotPolys[i], obstPolys[j])) {
+						console.log("ummm");
 						return;
+					}
 			}
 			
-			this.x = x2;
-			this.y = y2;
+			this.x = round4(x2);
+			this.y = round4(y2);
 			this.theta = theta2;
-			
-			//this.updateLineSensor();
-			//this.updateDistSensor();
 		},
 		
 		// returns [[x,y],[xc,yc]]

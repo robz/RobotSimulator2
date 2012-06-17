@@ -1,17 +1,12 @@
 // Basic line following code
-
 var cp_pow1 = 0, cp_pow2 = 0;
 
 function cp_main() {
-	console.log("initializing custom program!");
 	cp_pow1 = .5;
 	cp_pow2 = .5;
-	setInterval("cp_loop();", 100);
 }
 
 function cp_loop() {
-	if(!customOn) return;
-	
 	var linesensor = readLineSensor();
 	var error = getError(linesensor);
 	

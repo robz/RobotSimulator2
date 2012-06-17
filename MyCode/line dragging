@@ -1,10 +1,11 @@
-canvas.onkeypress = keyPressed;
-	//canvas.onmousedown = turnDragOn;
-	//canvas.onmouseup = turnDragOff;
-	//canvas.onmousemove = mouseDragged;
+
+/*	
+	canvas.onmousedown = turnDragOn;
+	canvas.onmouseup = turnDragOff;
+	canvas.onmousemove = mouseDragged;
 }
 
-/*
+
 var drag;
 var blackLine = [];
 

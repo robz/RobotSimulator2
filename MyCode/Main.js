@@ -1,4 +1,4 @@
-var myCodeMirror, robotState, vel1, vel2;
+var progCodeMirror, swCodeMirror, robotState, vel1, vel2;
 
 var CANVAS_WIDTH = 540, CANVAS_HEIGHT = 640, ROBOT_DIM = 50, PI = Math.PI, V_INC = .1, 
 	VEL_MAX = 1, REPAINT_PERIOD = 50, WHEEL_WIDTH = 10, NUM_TREDS = 5, LINE_SENSOR_RADIUS = 4,
@@ -6,10 +6,25 @@ var CANVAS_WIDTH = 540, CANVAS_HEIGHT = 640, ROBOT_DIM = 50, PI = Math.PI, V_INC
 	
 var obstacles, blackTape;
 
+var lineFollowerOn, wallFollowerOn;
+
 window.onload = function main() {
-	// set up syntax highlighting
-	var myTextArea = document.getElementById("textarea");
-	myCodeMirror = CodeMirror.fromTextArea(myTextArea);
+
+	// check storage for local copy of code
+	var progTextArea = document.getElementById("prog_textarea");
+	if(window["localStorage"]) {
+		var progText = localStorage.getItem("program");
+		if(progText != null) {
+			progTextArea.value = progText;
+		}
+	}
+	
+	// set up syntax highlighting for custom prog
+	progCodeMirror = CodeMirror.fromTextArea(progTextArea);
+	
+	// set up syntax highlighting for simuware api
+	var swTextArea = document.getElementById("simuware_textarea");
+	swCodeMirror = CodeMirror.fromTextArea(swTextArea, {readOnly:true});
 	
 	// loading custom program
 	document.getElementById("loadBtn").onclick = loadCustom;
@@ -18,18 +33,39 @@ window.onload = function main() {
 	var canvas = document.getElementById("canvas");
 	canvas.onkeypress = keyPressed;
 	
+	// create globals for robot and obstacles (accessed all over the place)
 	robotState = makeState(CANVAS_WIDTH/2, CANVAS_HEIGHT/2, Math.random()*2*PI, ROBOT_DIM);
 	createObstacles();
-	robotState.updateDistSensor(obstacles);
-	robotState.updateLineSensor(blackTape);
 	
+	// kick off sensors
+	robotState.updateDistSensor(obstacles);
+	if(blackTape)
+		robotState.updateLineSensor(blackTape);
+	
+	// start state-updater and repainter
 	vel1 = vel2 = 0;
 	setInterval("updateState();", 60);
 	setInterval("repaint();", 60);
+	
+	// initialize sub programs
+	initProg("line follower", ls_main, ls_loop, function() { return lineFollowerOn;});
+	initProg("wall follower", wf_main, wf_loop, function() { return wallFollowerOn;});
+}
+
+function initProg(prog_name, prog_main, prog_loop, prog_cond) {
+	console.log("initializing "+prog_name+"!");
+	prog_main();
+	setInterval(
+		function() {
+			if(prog_cond()) 
+				prog_loop();
+		}, 
+		100
+	);
 }
 
 function repaint() {
-	var start = new Date().getTime();
+	//var start = new Date().getTime();
 	
 	var canvas = document.getElementById("canvas");
 	var ctx = canvas.getContext("2d");
@@ -38,26 +74,28 @@ function repaint() {
 	ctx.fillStyle = "lightblue";
 	ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 	
-	drawBlackTape(ctx, blackTape);
+	if(blackTape)
+		drawBlackTape(ctx, blackTape);
 	drawRobot(ctx, robotState);
 	drawObstacles(ctx, obstacles);	
 	drawDistSensor(ctx, robotState);
 	drawStateInfo(ctx, robotState);
 	
-	var end = new Date().getTime();
-	console.log(end-start);
+	//var end = new Date().getTime();
+	//console.log(end-start);
 }
 
 function updateState() {
-	var start = new Date().getTime();
+	//var start = new Date().getTime();
 	
 	if (vel1 != 0 || vel2 != 0) {
 		robotState.updatePos(vel1*3, vel2*3, obstacles);
 		robotState.updateDistSensor(obstacles);
-		robotState.updateLineSensor(blackTape);
+		if(blackTape)
+			robotState.updateLineSensor(blackTape);
 	}
 	
-	var end = new Date().getTime();
+	//var end = new Date().getTime();
 	//console.log(end-start);
 }
 
@@ -65,7 +103,21 @@ function keyPressed() {
 	var key = event.which;
 	
 	var nvel1 = vel1, nvel2 = vel2;
-	if(key == 'f'.charCodeAt()) {
+	
+	if (key == ' '.charCodeAt()) {
+		console.log("STOP!!!");
+		nvel1 = nvel2 = 0;
+		lineFollowerOn = wallFollowerOn = false;
+	} else if(key == 'a'.charCodeAt() && !wallFollowerOn) {
+		lineFollowerOn = !lineFollowerOn;
+		if (!lineFollowerOn) nvel1 = nvel2 = 0;
+	} else if(key == 's'.charCodeAt() && !lineFollowerOn) {
+		wallFollowerOn = !wallFollowerOn;
+		if (!wallFollowerOn) nvel1 = nvel2 = 0;
+	} else if(lineFollowerOn || wallFollowerOn) {
+		// grabbing the input so the normal control don't mess
+		//	with the programs.
+	} else if(key == 'f'.charCodeAt()) {
 		nvel1 = vel1-V_INC;
 		if (nvel1 < -VEL_MAX)
 			nvel1 = -VEL_MAX;
@@ -81,7 +133,7 @@ function keyPressed() {
 		nvel2 = vel2+V_INC;
 		if (nvel2 > VEL_MAX)
 			nvel2 = VEL_MAX;
-	}
+	} 
 	
 	vel1 = nvel1;
 	vel2 = nvel2;
@@ -96,6 +148,10 @@ function loadCustom() {
 	
 	var head = document.getElementsByTagName("head")[0];
 	head.appendChild(extraScript);
+
+	if(window["localStorage"]) {
+		localStorage.setItem("program", code);
+	}
 }
 
 function createObstacles() {

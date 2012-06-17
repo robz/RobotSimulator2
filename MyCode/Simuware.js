@@ -1,18 +1,18 @@
 // returns booleans [s1,s2,s3,s4,s5,s6,s7,s8]
 function readLineSensor() {
-	return state.sensorVals;
+	return robotState.sensorVals;
 }
 
 // returns [left, center, right]
-function readDistSensor() {
-	return {left:state.distSensor[0].dist, 
-		center:state.distSensor[1].dist, 
-		right:state.distSensor[2].dist};
+function readDistSensors() {
+	return {left:robotState.distSensor[0].dist, 
+		center:robotState.distSensor[1].dist, 
+		right:robotState.distSensor[2].dist};
 }
 
 // returns [left enc, right enc]
 function readEncoders() {
-	return [state.totalw2, state.totalw1];
+	return [robotState.totalw2, robotState.totalw1];
 }
 
 // expects powi to be range [-1,1]
@@ -21,4 +21,14 @@ function setMotorPowers(pow1, pow2) {
 	if (pow1 < -1 || pow1 > 1 || pow2 < -1 || pow2 > 1) return false;
 	vel2 = pow1;
 	vel1 = pow2;
+}
+
+// returns # of milliseconds since 1974ish
+function getTime() {
+	return new Date().getTime();
+}
+
+// TODO: prints to "console"
+function print(str) {
+	
 }
