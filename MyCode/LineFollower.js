@@ -9,11 +9,9 @@ function ls_loop() {
 	var linesensor = readLineSensor();
 	var error = getError(linesensor);
 	
-	log("hi! line follower here!\n");
-	
 	if (error == null) {
-		// we're off the line completely, so just do what we 
-		//	did last time 
+		// we're off the line completely, so just 
+		//	do what we did last time 
 		setMotorPowers(lspow1, lspow2);
 		return;
 	} else {

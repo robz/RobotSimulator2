@@ -72,7 +72,7 @@ function drawDistSensor(g2, state) {
 
 function drawBlackTape(g2, blackLine) {
 	if (blackLine.length == 0) return;
-	g2.strokeStyle = "black";
+	g2.strokeStyle = "darkGray";
 	//g2.fillStyle = "black";
 	g2.lineWidth = BLACK_LINE_POINT_RADIUS*4;
 	g2.beginPath();
@@ -86,7 +86,7 @@ function drawBlackTape(g2, blackLine) {
 }
 
 function drawStateInfo(g2, state) {
-	g2.fillStyle = "white";
+	g2.fillStyle = "darkBlue";
 	g2.font = "bold 1em courier new"; 
 	g2.textalign = "right"; 
 	

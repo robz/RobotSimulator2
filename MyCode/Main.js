@@ -4,9 +4,9 @@ var CANVAS_WIDTH = 540, CANVAS_HEIGHT = 640, ROBOT_DIM = 50, PI = Math.PI, V_INC
 	VEL_MAX = 1, REPAINT_PERIOD = 50, WHEEL_WIDTH = 10, NUM_TREDS = 5, LINE_SENSOR_RADIUS = 4,
 	BLACK_LINE_POINT_RADIUS = 1, DIST_SENSOR_MAX = 400;
 	
-var obstacles, blackTape;
+var obstacles, blackTape, defaultCode;
 
-var lineFollowerOn, wallFollowerOn;
+var lineFollowerOn, wallFollowerOn, customOn;
 
 window.onload = function main() {
 
@@ -15,6 +15,7 @@ window.onload = function main() {
 	if(window["localStorage"]) {
 		var progText = localStorage.getItem("program");
 		if(progText != null) {
+			defaultCode = progTextArea.value;
 			progTextArea.value = progText;
 		}
 	}
@@ -22,12 +23,17 @@ window.onload = function main() {
 	// set up syntax highlighting for custom prog
 	progCodeMirror = CodeMirror.fromTextArea(progTextArea);
 	
+	// load the custom 
+	// (only necessary if it has changed, but need code mirror, so whatevz)
+	loadCustom();
+	
 	// set up syntax highlighting for simuware api
 	var swTextArea = document.getElementById("simuware_textarea");
 	swCodeMirror = CodeMirror.fromTextArea(swTextArea, {readOnly:true});
 	
 	// loading custom program
 	document.getElementById("loadBtn").onclick = loadCustom;
+	document.getElementById("revertBtn").onclick = revertToDefault;
 	
 	// canvas stuff
 	var canvas = document.getElementById("canvas");
@@ -50,16 +56,15 @@ window.onload = function main() {
 	// initialize sub programs
 	initProg("line follower", ls_main, ls_loop, function() { return lineFollowerOn;});
 	initProg("wall follower", wf_main, wf_loop, function() { return wallFollowerOn;});
+	initProg("custom program", cp_main, function() { cp_loop(); }, 
+		function() { return customOn; });
 }
 
 function initProg(prog_name, prog_main, prog_loop, prog_cond) {
 	console.log("initializing "+prog_name+"!");
 	prog_main();
 	setInterval(
-		function() {
-			if(prog_cond()) 
-				prog_loop();
-		}, 
+		function() { if(prog_cond()) prog_loop(); }, 
 		100
 	);
 }
@@ -108,13 +113,17 @@ function keyPressed() {
 		console.log("STOP!!!");
 		nvel1 = nvel2 = 0;
 		lineFollowerOn = wallFollowerOn = false;
-	} else if(key == 'a'.charCodeAt() && !wallFollowerOn) {
+	} else if(key == 'a'.charCodeAt() && !wallFollowerOn && !customOn) {
 		lineFollowerOn = !lineFollowerOn;
 		if (!lineFollowerOn) nvel1 = nvel2 = 0;
-	} else if(key == 's'.charCodeAt() && !lineFollowerOn) {
+	} else if(key == 's'.charCodeAt() && !lineFollowerOn && !customOn) {
 		wallFollowerOn = !wallFollowerOn;
 		if (!wallFollowerOn) nvel1 = nvel2 = 0;
-	} else if(lineFollowerOn || wallFollowerOn) {
+	} else if(key == 'w'.charCodeAt() && !lineFollowerOn && !wallFollowerOn) {
+		customOn = !customOn;
+		if (!customOn) nvel1 = nvel2 = 0;
+		else cp_main();
+	} else if(lineFollowerOn || wallFollowerOn || customOn) {
 		// grabbing the input so the normal control don't mess
 		//	with the programs.
 	} else if(key == 'f'.charCodeAt()) {
@@ -139,8 +148,12 @@ function keyPressed() {
 	vel2 = nvel2;
 }
 
+function revertToDefault() {
+	progCodeMirror.setValue(defaultCode);
+}
+
 function loadCustom() {
-	var code = myCodeMirror.getValue();
+	var code = progCodeMirror.getValue();
 	var codeNode = document.createTextNode(code);
 	
 	var extraScript = document.createElement("script");
@@ -160,4 +173,6 @@ function createObstacles() {
 	obstacles.push(createBox(CANVAS_WIDTH-5,0,5,CANVAS_HEIGHT));
 	obstacles.push(createBox(0,0,CANVAS_WIDTH,5));
 	obstacles.push(createBox(0,CANVAS_HEIGHT-5,CANVAS_WIDTH,5));
+	obstacles.push(createBox(0,CANVAS_HEIGHT-70,70,70));
+	obstacles.push(createBox(CANVAS_WIDTH-90,CANVAS_HEIGHT-90,90,90));
 }

@@ -102,7 +102,7 @@ function makeState(xs, ys, thetas, ds) {
 			for(var j = 0; j < obstPolys.length; j++) {
 				for(var i = 0; i < robotPolys.length; i++)
 					if(polysIntersect(robotPolys[i], obstPolys[j])) {
-						console.log("ummm");
+						console.log("wall!!");
 						return;
 					}
 			}

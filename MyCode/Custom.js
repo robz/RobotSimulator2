@@ -1,4 +1,5 @@
-// Basic line following code
+/* Basic line following code */
+
 var cp_pow1 = 0, cp_pow2 = 0;
 
 function cp_main() {
@@ -7,11 +8,13 @@ function cp_main() {
 }
 
 function cp_loop() {
+	console.log("hi!");
+
 	var linesensor = readLineSensor();
 	var error = getError(linesensor);
 	
-	// we're off the line completely, so just do what we 
-	//	did last time 
+	// we're off the line completely, so just 
+	//	do what we did last time 
 	if (error == null) {
 		setMotorPowers(cp_pow1, cp_pow2);
 		return;
