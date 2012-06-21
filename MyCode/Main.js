@@ -48,7 +48,7 @@ window.onload = function main() {
 		robotState.updateLineSensor(blackTape);
 		
 	// initialize particleVectors
-	particleVectors = [createVector({x:200,y:200},PI/3,20)];
+	particleVectors = [];
 	
 	// start state-updater and repainter
 	vel1 = vel2 = 0;
