@@ -1,7 +1,7 @@
 var progCodeMirror, swCodeMirror, robotState, vel1, vel2;
 
-var CANVAS_WIDTH = 540, CANVAS_HEIGHT = 640, ROBOT_DIM = 50, PI = Math.PI, V_INC = .1, 
-	VEL_MAX = 1, REPAINT_PERIOD = 50, WHEEL_WIDTH = 10, NUM_TREDS = 5, LINE_SENSOR_RADIUS = 4,
+var CANVAS_WIDTH = 540, CANVAS_HEIGHT = 640, ROBOT_DIM = 30, PI = Math.PI, V_INC = .1, 
+	VEL_MAX = 1, REPAINT_PERIOD = 50, WHEEL_WIDTH = 6, NUM_TREDS = 5, LINE_SENSOR_RADIUS = 2,
 	BLACK_LINE_POINT_RADIUS = 1, DIST_SENSOR_MAX = 400;
 	
 var obstacles, blackTape, particleVectors, defaultCode;
@@ -107,7 +107,8 @@ function updateState() {
 	//console.log(end-start);
 }
 
-function keyPressed() {
+function keyPressed(event) {
+	event.preventDefault(); // freaking dumb firefox quickfind bull.
 	var key = event.which;
 	
 	var nvel1 = vel1, nvel2 = vel2;
@@ -178,4 +179,43 @@ function createObstacles() {
 	obstacles.push(createBox(0,CANVAS_HEIGHT-5,CANVAS_WIDTH,5));
 	obstacles.push(createBox(0,CANVAS_HEIGHT-70,70,70));
 	obstacles.push(createBox(CANVAS_WIDTH-90,CANVAS_HEIGHT-90,90,90));
+	obstacles.push(createBox(200,0,110,60));
+	obstacles.push(createBox(160,180,110,60));
+	obstacles.push(createBox(300,400,70,100));
+	obstacles.push(createBox(CANVAS_WIDTH-40,150,40,300));
+	obstacles.push(createBox(0,200,30,200));
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
