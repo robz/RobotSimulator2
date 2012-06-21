@@ -28,7 +28,17 @@ function getTime() {
 	return new Date().getTime();
 }
 
-// TODO: prints to "console"
+// prints to "console"
 function log(str) {
 	document.getElementById("console_textarea").value += str;
+}
+
+// expends an array of 'particles', so for example:
+//	[[x1,y1,theta1],[x2,y2,theta2],...,[xn,yn,thetan]]
+function setParticleList(particles) {
+	particleVectors = new Array(particles.length);
+	for(var i = 0; i < particles.length; i++) 
+		particleVectors[i] = createVector(
+			{x:particles[i][0], y:particles[i][1]}, 
+			particles[i][2], 20);
 }

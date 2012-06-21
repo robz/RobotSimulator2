@@ -21,7 +21,17 @@ Circle = {
 	p: Point,
 	r: ~
 }
+
+Vector = {
+	p: Point,
+	t: theta,
+	m: magnitude
+}
 */
+
+function createVector(point, theta, mag) {
+	return {p:point, t:theta, m:mag};
+}
 
 function createLineFromVector(point, theta) {
 	var dis = 999999;

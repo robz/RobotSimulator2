@@ -1,3 +1,26 @@
+function drawVector(g2, vector) {
+	g2.beginPath();
+	g2.lineWidth = 2;
+	g2.strokeStyle = "darkGreen"; 
+	g2.moveTo(vector.p.x, vector.p.y);
+	g2.lineTo(vector.p.x + vector.m*Math.cos(vector.t), 
+		vector.p.y + vector.m*Math.sin(vector.t) );
+	g2.closePath();
+	g2.stroke();
+	
+	g2.fillStyle = "darkGreen";
+	g2.beginPath();
+	g2.arc(vector.p.x, vector.p.y, 5, 0, 2*Math.PI, true);
+	g2.closePath();
+	g2.fill();
+}
+
+function drawVectors(g2, vectors) {
+	for(var i = 0; i < vectors.length; i++) {
+		drawVector(g2, vectors[i]);
+	}
+}
+
 function drawPoly(g2, poly) {
 	g2.beginPath();
 	g2.moveTo(poly.points[0].x, poly.points[0].y);

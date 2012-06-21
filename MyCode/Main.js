@@ -4,12 +4,11 @@ var CANVAS_WIDTH = 540, CANVAS_HEIGHT = 640, ROBOT_DIM = 50, PI = Math.PI, V_INC
 	VEL_MAX = 1, REPAINT_PERIOD = 50, WHEEL_WIDTH = 10, NUM_TREDS = 5, LINE_SENSOR_RADIUS = 4,
 	BLACK_LINE_POINT_RADIUS = 1, DIST_SENSOR_MAX = 400;
 	
-var obstacles, blackTape, defaultCode;
+var obstacles, blackTape, particleVectors, defaultCode;
 
 var lineFollowerOn, wallFollowerOn, customOn;
 
 window.onload = function main() {
-
 	// check storage for local copy of code
 	var progTextArea = document.getElementById("prog_textarea");
 	if(window["localStorage"]) {
@@ -47,6 +46,9 @@ window.onload = function main() {
 	robotState.updateDistSensor(obstacles);
 	if(blackTape)
 		robotState.updateLineSensor(blackTape);
+		
+	// initialize particleVectors
+	particleVectors = [createVector({x:200,y:200},PI/3,20)];
 	
 	// start state-updater and repainter
 	vel1 = vel2 = 0;
@@ -85,6 +87,7 @@ function repaint() {
 	drawObstacles(ctx, obstacles);	
 	drawDistSensor(ctx, robotState);
 	drawStateInfo(ctx, robotState);
+	drawVectors(ctx, particleVectors);
 	
 	//var end = new Date().getTime();
 	//console.log(end-start);
