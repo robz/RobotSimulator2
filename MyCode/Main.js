@@ -1,4 +1,4 @@
-var progCodeMirror, swCodeMirror, robotState, vel1, vel2;
+var progCodeMirror, swCodeMirror, robotState, vel1, vel2, baseState;
 
 var CANVAS_WIDTH = 540, CANVAS_HEIGHT = 640, ROBOT_DIM = 30, PI = Math.PI, V_INC = .1, 
 	VEL_MAX = 1, REPAINT_PERIOD = 50, WHEEL_WIDTH = 6, NUM_TREDS = 5, LINE_SENSOR_RADIUS = 2,
@@ -6,7 +6,7 @@ var CANVAS_WIDTH = 540, CANVAS_HEIGHT = 640, ROBOT_DIM = 30, PI = Math.PI, V_INC
 	
 var obstacles, blackTape, particleVectors, defaultCode;
 
-var lineFollowerOn, wallFollowerOn, customOn;
+var lineFollowerOn, wallFollowerOn, customOn, firstPerson;
 
 window.onload = function main() {
 	// check storage for local copy of code
@@ -40,6 +40,7 @@ window.onload = function main() {
 	
 	// create globals for robot and obstacles (accessed all over the place)
 	robotState = makeState(CANVAS_WIDTH/2, CANVAS_HEIGHT/2, Math.random()*2*PI, ROBOT_DIM);
+	baseState = {x:CANVAS_WIDTH/2, y:CANVAS_HEIGHT/2, theta:PI*3/2};
 	createObstacles();
 	
 	// kick off sensors
@@ -75,7 +76,8 @@ function repaint() {
 	//var start = new Date().getTime();
 	
 	var canvas = document.getElementById("canvas");
-	var ctx = canvas.getContext("2d");
+	var context = canvas.getContext("2d");
+	var ctx = makeContextTramp(context, baseState, robotState, firstPerson);
 	
 	// clear the background
 	ctx.fillStyle = "lightblue";
@@ -113,7 +115,9 @@ function keyPressed(event) {
 	
 	var nvel1 = vel1, nvel2 = vel2;
 	
-	if (key == ' '.charCodeAt()) {
+	if (key == 'g'.charCodeAt()) {
+		firstPerson = !firstPerson;
+	} else if (key == ' '.charCodeAt()) {
 		console.log("STOP!!!");
 		nvel1 = nvel2 = 0;
 		lineFollowerOn = wallFollowerOn = false;

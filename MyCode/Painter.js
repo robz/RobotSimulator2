@@ -43,13 +43,14 @@ function drawRobot(g2, state) {
 	
 	// axis & direction lines
 	var corners = robotPolys[0];
-	g2.strokeStyle = "darkgray";
+	g2.strokeStyle = "darkGray";
 	g2.beginPath();
 	g2.moveTo(corners.points[0].x,corners.points[0].y);
 	g2.lineTo(corners.points[1].x,corners.points[1].y);
+	g2.stroke();
+	g2.beginPath();
 	g2.moveTo(vals[0][0],vals[0][1]);
 	g2.lineTo(vals[1][0],vals[1][1]);
-	g2.closePath();
 	g2.stroke();
 	
 	// treds
@@ -74,7 +75,7 @@ function drawRobot(g2, state) {
 }
 
 function drawObstacles(g2, obstPolys) {
-	g2.fillStyle = "brown";
+	g2.fillStyle = "green";
 	for(var j = 0; j < obstPolys.length; j++) 
 		drawPoly(g2,obstPolys[j]);
 }
@@ -129,5 +130,6 @@ function drawStateInfo(g2, state) {
 	g2.fillText("line following: a", CANVAS_WIDTH-180, 80);
 	g2.fillText("wall following: s", CANVAS_WIDTH-180, 100);
 	g2.fillText("custom program: w", CANVAS_WIDTH-180, 120);
-	g2.fillText("stop: space", CANVAS_WIDTH-180, 140);
+	g2.fillText("toggle viewer:  g", CANVAS_WIDTH-180, 140);
+	g2.fillText("stop: space", CANVAS_WIDTH-180, 160);
 }
