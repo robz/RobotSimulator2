@@ -1,8 +1,8 @@
 var progCodeMirror, swCodeMirror, robotState, vel1, vel2, baseState;
 
-var CANVAS_WIDTH = 540, CANVAS_HEIGHT = 640, ROBOT_DIM = 30, PI = Math.PI, V_INC = .1, 
-	VEL_MAX = 1, REPAINT_PERIOD = 50, WHEEL_WIDTH = 6, NUM_TREDS = 5, LINE_SENSOR_RADIUS = 2,
-	BLACK_LINE_POINT_RADIUS = 1, DIST_SENSOR_MAX = 400;
+var APP_WIDTH = 1000, APP_HEIGHT = 650, CANVAS_WIDTH = 540, CANVAS_HEIGHT = 640, ROBOT_DIM = 30, 
+	PI = Math.PI, V_INC = .1, VEL_MAX = 1, REPAINT_PERIOD = 50, WHEEL_WIDTH = 6, NUM_TREDS = 5, 
+	LINE_SENSOR_RADIUS = 2, BLACK_LINE_POINT_RADIUS = 1, DIST_SENSOR_MAX = 400;
 	
 var obstacles, blackTape, particleVectors, defaultCode;
 
@@ -29,6 +29,11 @@ window.onload = function main() {
 	// set up syntax highlighting for simuware api
 	var swTextArea = document.getElementById("simuware_textarea");
 	swCodeMirror = CodeMirror.fromTextArea(swTextArea, {readOnly:true});
+	
+	// Resize if necessary to fit the browser size
+	var bsize = getBrowserWindowSizeInit();
+	var asize = getAppSize(APP_WIDTH, APP_HEIGHT, bsize.width, bsize.height-70);
+	resizeApp(asize);
 	
 	// loading custom program
 	document.getElementById("loadBtn").onclick = loadCustom;
@@ -61,6 +66,78 @@ window.onload = function main() {
 	initProg("wall follower", wf_main, wf_loop, function() { return wallFollowerOn;});
 	initProg("custom program", cp_main, function() { cp_loop(); }, 
 		function() { return customOn; });
+}
+
+function resizeApp(asize) {
+	var container = document.getElementById("container");
+	container.style.width = asize.width+"px";
+	container.style.height = asize.height+"px";
+	
+	var canvasCont = document.getElementById("canv_container");
+	canvasCont.style.width = (asize.width/2+40)+"px";
+	canvasCont.style.height = (asize.height-10)+"px";
+	
+	var textCont = document.getElementById("text_container");
+	textCont.style.width = (asize.width/2-50)+"px";
+	textCont.style.height = (asize.height-10)+"px";
+	
+	addClass("text_tab_height", {"height":(asize.height-41)+"px"});
+	var elements = document.getElementsByClassName('tabbertab');
+	for (var i = 0; i < elements.length; i++) {
+		elements[i].className += ' text_tab_height';
+	}
+	
+	addClass("prog_btn_width", {"width": ((asize.width/2-50)/2-8)});
+	var elements = document.getElementsByClassName('prog_btn');
+	for (var i = 0; i < elements.length; i++) {
+		elements[i].className = 'prog_btn prog_btn_width';
+	}
+	
+	swCodeMirror.getScrollerElement().style.height = asize.height-70;
+	progCodeMirror.getScrollerElement().style.height = asize.height-100;
+	
+	var consoleTA = document.getElementById("console_textarea");
+	consoleTA.style.width = (asize.width/2-62)+"px";
+	consoleTA.style.height = (asize.height-40)+"px";
+	
+	var canvas = document.getElementById("canvas");
+	canvas.style.width = (asize.width/2+40)+"px";
+	canvas.style.height = (asize.height-10)+"px";
+}
+
+function addClass(name, attributes) {
+	var style = document.createElement('style');
+	style.type = 'text/css';
+	var str = "."+name+" { ";
+	for(var key in attributes) {
+		str += key+" : "+attributes[key]+";";
+	}
+	str += "}";
+	style.innerHTML = str;
+	document.getElementsByTagName('head')[0].appendChild(style);
+}
+
+function getAppSize(w1, h1, w2, h2) {
+	var r = h1/w1;
+	var w3 = w2;
+	var h3 = w3*r;
+	if (h3 <= h2) {
+		if (w3 > w1 && h3 > h1) 
+			return {width:w3, height:h3};
+		else
+			return {width:w1, height:h1};
+	} else {
+		h3 = h2;
+		w3 = h2/r;
+		if (w3 <= w2) {
+			if (w3 > w1 && h3 > h1) 
+				return {width:w3, height:h3};
+			else
+				return {width:w1, height:h1};
+		} else {
+			return {width:w1, height:h1};
+		}
+	}
 }
 
 function initProg(prog_name, prog_main, prog_loop, prog_cond) {

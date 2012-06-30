@@ -10,6 +10,7 @@
 	<script src="MyCode/Custom.js" type="text/javascript"></script>
 	<script src="MyCode/Painter.js" type="text/javascript"></script>
 	<script src="MyCode/ContextTramp.js" type="text/javascript"></script>
+	<script src="MyCode/BrowserSize.js" type="text/javascript"></script>
 	<link rel="stylesheet" href="RobotSimulator2.css">
 	
 	<script src="CodeMirror-2.25/lib/codemirror.js"></script>
@@ -36,9 +37,9 @@
 6. Change the code! See the Simuware tab for some useful functions. <br/><br/>
 7. Note: the <code>cp_main</code> function gets called whenever the program is loaded, and the <code>cp_loop</code> function is called every 100 milliseconds (when the custom progam is running in the simulation).<br/><br/>
 8. Hit the save&load button to save the program locally (don't worry about refreshing the page) and reload it to the robot at any point. You can reload it even while the program is running in the simulation.<br/><br/>
-TODO: write a particle filter program, <del>add first-person view</del>, add syntax checking, add getObjectList to API, resize to browser, add tab for example programs, fix console width for firefox
+TODO: write a particle filter program, <del>add first-person view</del>, add syntax checking, add getObjectList to API, <del>resize to browser</del>, add tab for example programs, <del>fix console width for firefox</del>, fix line detection, tab remembrance
 		</div>
-		<div class="tabbertab text_tab" title="Program">
+		<div class="tabbertab" title="Program">
 			<div class="code_header">Custom Program</div>
 			<textarea id="prog_textarea">/* 
 This is some basic line following code.			
@@ -89,7 +90,7 @@ function getError(linesensor) {
 			<button class="prog_btn" id="revertBtn">revert to default</button>
 			<button class="prog_btn" id="loadBtn">save &#38; load</button>
 		</div>
-		<div class="tabbertab text_tab" title="Simuware">
+		<div class="tabbertab" title="Simuware">
 			<div class="code_header">Simuware API</div>
 			<textarea id="simuware_textarea">
 // returns booleans [s1,s2,s3,s4,s5,s6,s7,s8]
@@ -117,7 +118,7 @@ function log(str);
 //	dark green on the canvas.
 function setParticleList(particles);</textarea>
 		</div>
-		<div class="tabbertab text_tab" title="Console">
+		<div class="tabbertab" title="Console">
 <textarea id="console_textarea" rows=45 cols=59 readonly="readonly" wrap="off" style="resize: none;"></textarea>
 		</div>
 		</div>

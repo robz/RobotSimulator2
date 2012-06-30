@@ -2,6 +2,12 @@
 	width: 1000px;
 	height: 650px;
 	margin: auto;
+	border-bottom: 1px solid black;
+}
+
+#canvas {
+	width: 540px;
+	height: 640px;
 }
 
 #text_container {
@@ -27,7 +33,6 @@
 	text-align: center;
 	font-size: 30px;
 	font-family: "Courier New", Courier, sans-serif;
-	font-style: bold;
 	border-bottom: 1px solid black;
 	margin-bottom: 10px;
 }
@@ -35,9 +40,9 @@
 .prog_btn {
 	font-style: normal;
 	font-size: 20px;
-	width: 217px;
 }
 
-.text_tab {
-	height: 608px;
+#console_textarea {
+	font-size: 14px;
+	font-family: "Courier New", Courier, sans-serif;
 }
