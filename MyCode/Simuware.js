@@ -35,6 +35,8 @@ function log(str) {
 
 // expends an array of 'particles', so for example:
 //	[[x1,y1,theta1],[x2,y2,theta2],...,[xn,yn,thetan]]
+// once set, they will be draw as dots & lines in 
+//	black on the canvas.
 function setParticleList(particles) {
 	particleVectors = new Array(particles.length);
 	for(var i = 0; i < particles.length; i++) 

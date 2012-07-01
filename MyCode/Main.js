@@ -6,16 +6,26 @@ var APP_WIDTH = 1000, APP_HEIGHT = 650, CANVAS_WIDTH = 540, CANVAS_HEIGHT = 640,
 	
 var obstacles, blackTape, particleVectors, defaultCode;
 
-var lineFollowerOn, wallFollowerOn, customOn, firstPerson;
+var lineFollowerOn, wallFollowerOn, customOn, firstPerson, defaultTabNum = 0;
 
-window.onload = function main() {
-	// check storage for local copy of code
+var tabberOptions = {
+	'onClick': function(argsObj) {
+		localStorage.setItem("defaulttab", argsObj.index);
+ 	}
+};
+
+window.onload = function() {
+	// check storage for local copy of code & default tab
 	var progTextArea = document.getElementById("prog_textarea");
 	if(window["localStorage"]) {
 		var progText = localStorage.getItem("program");
 		if(progText != null) {
 			defaultCode = progTextArea.value;
 			progTextArea.value = progText;
+		}
+		defaulttab = localStorage.getItem("defaulttab");
+		if (defaulttab != null) {
+			defaultTabNum = parseInt(defaulttab);
 		}
 	}
 	
@@ -84,6 +94,8 @@ function resizeApp(asize) {
 	addClass("text_tab_height", {"height":(asize.height-41)+"px"});
 	var elements = document.getElementsByClassName('tabbertab');
 	for (var i = 0; i < elements.length; i++) {
+		if (i == defaultTabNum)
+			elements[i].className += " tabbertabdefault";
 		elements[i].className += ' text_tab_height';
 	}
 	
