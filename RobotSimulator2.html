@@ -39,7 +39,7 @@
 6. Change the code! See the Simuware tab for some useful functions. <br/><br/>
 7. Note: the <code>cp_main</code> function gets called whenever the program is loaded, and the <code>cp_loop</code> function is called every 100 milliseconds (when the custom progam is running in the simulation).<br/><br/>
 8. Hit the save&load button to save the program locally (don't worry about refreshing the page) and reload it to the robot at any point. You can reload it even while the program is running in the simulation.<br/><br/>
-TODO: write a particle filter program, <del>add first-person view</del>, add syntax checking, add getObjectList to API, <del>resize to browser</del>, add tab for example programs, <del>fix console width for firefox</del>, fix line detection, <del>tab remembrance</del>
+TODO: write a particle filter program, <del>add first-person view</del>, add syntax checking, <del>add getObjectList to API</del>, <del>resize to browser</del>, add tab for example programs, <del>fix console width for firefox</del>, fix line detection, <del>tab remembrance</del>, make ctrl-s save, add dist-to-obstacle function
 		</div>
 		<div class="tabbertab" title="Program">
 			<div class="code_header">Custom Program</div>
@@ -118,7 +118,12 @@ function log(str);
 // [[x1,y1,theta1],[x2,y2,theta2],...,[xn,yn,thetan]]
 // once set, they will be draw as dots & lines in 
 //	black on the canvas.
-function setParticleList(particles);</textarea>
+function setParticleList(particles);
+
+// returns a list of obstacles on the field:
+//	[{ points:[{x:~,y:~},...], lines:[{m:~,b:~,v:~,p1:~,p2:~},...] }, ...]
+// where the points and lines are ordered clockwise around a given obstacle
+function getObstacleList();</textarea>
 		</div>
 		<div class="tabbertab" title="Console">
 <textarea id="console_textarea" rows=45 cols=59 readonly="readonly" wrap="off" style="resize: none;"></textarea>

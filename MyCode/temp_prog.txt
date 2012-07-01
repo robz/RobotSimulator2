@@ -1,0 +1,95 @@
+/* 
+This is some basic line following code.			
+*/
+
+var cp_pow1 = 0, cp_pow2 = 0;
+
+function cp_main() {
+	cp_pow1 = .5;
+	cp_pow2 = .5;
+    console.log(obstacles);
+}
+
+function cp_loop() {
+	var linesensor = readLineSensor();
+	var error = getError(linesensor);
+  
+    makeParticleList();
+	
+	// we're off the line completely, so just
+	//	do what we did last time 
+	if (error == null) {
+		setMotorPowers(cp_pow1, cp_pow2);
+		return;
+	}
+	
+	var p_const = .5/3.5;
+	var p1 = .5, p2 = .5;
+	if (Math.abs(error) > .5) {
+		p1 = error*(-1*p_const)+.5; 
+		p2 = error*p_const+.5;
+	}
+	
+	cp_pow1 = p1;
+	cp_pow2 = p2;
+	
+	setMotorPowers(cp_pow1, cp_pow2);
+}
+
+function makeParticleList() {
+  var particles = [];
+  var obsts = getObstacleList();
+  for(var i = 0; i < obsts.length; i++) {
+    console.log(obsts[i].points);
+    var avePoint = averagePoints(obsts[i].points);
+  	particles.push([avePoint.x, avePoint.y, 2]);
+  }
+  log(particles.length+"\n");
+  setParticleList(particles);
+}
+
+function averagePoints(points) {
+  var totalp = {x:0, y:0};
+  for(var i = 0; i < points.length; i++) {
+  	totalp.x += points[i].x;
+    totalp.y += points[i].y; 
+  }
+  return {x: (totalp.x/points.length), 
+          y: (totalp.y/points.length)};
+}
+
+function getError(linesensor) {
+	var sum = 0, total = 0;
+	for(var i = 0; i < 8; i++) {
+		if(linesensor[i]) {
+			total++;
+			sum += i;
+		}
+	}
+	if (total == 0) return null;
+	return 3.5-sum/total;
+}
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

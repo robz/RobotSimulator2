@@ -1,14 +1,14 @@
 function drawVector(g2, vector) {
 	g2.beginPath();
 	g2.lineWidth = 2;
-	g2.strokeStyle = "darkGreen"; 
+	g2.strokeStyle = "black"; 
 	g2.moveTo(vector.p.x, vector.p.y);
 	g2.lineTo(vector.p.x + vector.m*Math.cos(vector.t), 
 		vector.p.y + vector.m*Math.sin(vector.t) );
 	g2.closePath();
 	g2.stroke();
 	
-	g2.fillStyle = "darkGreen";
+	g2.fillStyle = "black";
 	g2.beginPath();
 	g2.arc(vector.p.x, vector.p.y, 5, 0, 2*Math.PI, true);
 	g2.closePath();

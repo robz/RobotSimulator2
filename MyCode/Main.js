@@ -177,8 +177,8 @@ function repaint() {
 	drawRobot(ctx, robotState);
 	drawObstacles(ctx, obstacles);	
 	drawDistSensor(ctx, robotState);
-	drawStateInfo(ctx, robotState);
 	drawVectors(ctx, particleVectors);
+	drawStateInfo(ctx, robotState);
 	
 	//var end = new Date().getTime();
 	//console.log(end-start);

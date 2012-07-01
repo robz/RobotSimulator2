@@ -44,3 +44,10 @@ function setParticleList(particles) {
 			{x:particles[i][0], y:particles[i][1]}, 
 			particles[i][2], 20);
 }
+
+// returns a list of obstacles on the field:
+//	[{ points:[{x:~,y:~},...], lines:[{m:~,b:~,v:~,p1:~,p2:~},...] }, ...]
+// where the points and lines are ordered clockwise around a given obstacle
+function getObstacleList() {
+	return obstacles;
+}
