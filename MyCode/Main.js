@@ -72,10 +72,11 @@ window.onload = function() {
 	setInterval("repaint();", 60);
 	
 	// initialize sub programs
-	initProg("line follower", ls_main, ls_loop, function() { return lineFollowerOn;});
-	initProg("wall follower", wf_main, wf_loop, function() { return wallFollowerOn;});
+	initProg("particle filter", pf_main, pf_loop, function() { return true;}, 100);
+	initProg("line follower", ls_main, ls_loop, function() { return lineFollowerOn;}, 100);
+	initProg("wall follower", wf_main, wf_loop, function() { return wallFollowerOn;}, 100);
 	initProg("custom program", cp_main, function() { cp_loop(); }, 
-		function() { return customOn; });
+		function() { return customOn; }, 100);
 }
 
 function resizeApp(asize) {
@@ -91,12 +92,18 @@ function resizeApp(asize) {
 	textCont.style.width = (asize.width/2-50)+"px";
 	textCont.style.height = (asize.height-10)+"px";
 	
-	addClass("text_tab_height", {"height":(asize.height-41)+"px"});
-	var elements = document.getElementsByClassName('tabbertab');
+	addClass("text_tab_height1", {"height":(asize.height-41)+"px"});
+	var elements = document.getElementsByClassName('tablevel1');
 	for (var i = 0; i < elements.length; i++) {
 		if (i == defaultTabNum)
 			elements[i].className += " tabbertabdefault";
-		elements[i].className += ' text_tab_height';
+		elements[i].className += ' tabbertab text_tab_height1';
+	}
+	
+	addClass("text_tab_height2", {"height":(asize.height-41-50)+"px"});
+	var elements = document.getElementsByClassName('tablevel2');
+	for (var i = 0; i < elements.length; i++) {
+		elements[i].className += ' tabbertab text_tab_height2';
 	}
 	
 	addClass("prog_btn_width", {"width": ((asize.width/2-50)/2-8)});
@@ -152,12 +159,12 @@ function getAppSize(w1, h1, w2, h2) {
 	}
 }
 
-function initProg(prog_name, prog_main, prog_loop, prog_cond) {
+function initProg(prog_name, prog_main, prog_loop, prog_cond, period) {
 	console.log("initializing "+prog_name+"!");
 	prog_main();
 	setInterval(
 		function() { if(prog_cond()) prog_loop(); }, 
-		100
+		period
 	);
 }
 
@@ -174,10 +181,10 @@ function repaint() {
 	
 	if(blackTape)
 		drawBlackTape(ctx, blackTape);
-	drawRobot(ctx, robotState);
 	drawObstacles(ctx, obstacles);	
-	drawDistSensor(ctx, robotState);
+	drawRobot(ctx, robotState);
 	drawVectors(ctx, particleVectors);
+	drawDistSensor(ctx, robotState);
 	drawStateInfo(ctx, robotState);
 	
 	//var end = new Date().getTime();
@@ -277,6 +284,7 @@ function createObstacles() {
 	obstacles.push(createBox(300,400,70,100));
 	obstacles.push(createBox(CANVAS_WIDTH-40,150,40,300));
 	obstacles.push(createBox(0,200,30,200));
+	obstacles.push(createBox(150,350,80,80));
 }
 
 
