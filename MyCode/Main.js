@@ -6,7 +6,9 @@ var APP_WIDTH = 1000, APP_HEIGHT = 650, CANVAS_WIDTH = 540, CANVAS_HEIGHT = 640,
 	
 var obstacles, blackTape, particleVectors, defaultCode;
 
-var lineFollowerOn, wallFollowerOn, customOn, firstPerson, defaultTabNum = 0;
+var lineFollowerOn, wallFollowerOn, customOn, pf_state = 0, firstPerson;
+
+var defaultTabNum = 0;
 
 var tabberOptions = {
 	'onClick': function(argsObj) {
@@ -182,8 +184,11 @@ function repaint() {
 	if(blackTape)
 		drawBlackTape(ctx, blackTape);
 	drawObstacles(ctx, obstacles);	
+	if (particleVectors.length > 1)
+		drawVectors(ctx, particleVectors);
 	drawRobot(ctx, robotState);
-	drawVectors(ctx, particleVectors);
+	if (particleVectors.length == 1)
+		drawVectors(ctx, particleVectors);
 	drawDistSensor(ctx, robotState);
 	drawStateInfo(ctx, robotState);
 	
@@ -227,6 +232,9 @@ function keyPressed(event) {
 		customOn = !customOn;
 		if (!customOn) nvel1 = nvel2 = 0;
 		else cp_main();
+	} else if(key == 't'.charCodeAt()) {
+		pf_state = pf_state+1;
+		if (pf_state == 3) pf_state = 0;
 	} else if(lineFollowerOn || wallFollowerOn || customOn) {
 		// grabbing the input so the normal control don't mess
 		//	with the programs.

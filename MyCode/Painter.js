@@ -131,5 +131,6 @@ function drawStateInfo(g2, state) {
 	g2.fillText("wall following: s", CANVAS_WIDTH-180, 100);
 	g2.fillText("custom program: w", CANVAS_WIDTH-180, 120);
 	g2.fillText("toggle viewer:  g", CANVAS_WIDTH-180, 140);
-	g2.fillText("stop: space", CANVAS_WIDTH-180, 160);
+	g2.fillText("show tracking:  t", CANVAS_WIDTH-180, 160);
+	g2.fillText("stop: space", CANVAS_WIDTH-180, 180);
 }
