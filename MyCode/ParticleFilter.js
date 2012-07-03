@@ -2,18 +2,18 @@
 This is a basic particle filter for localization.
 */
 
-var NUM_PARTICLES = 500;
+var NUM_PARTICLES = 600;
 var particleList, obstacleList;
 
 function pf_main() {
 	obstacleList = getObstacleList();
-	particleList = centeredDistribution(NUM_PARTICLES);
+	particleList = centeredDistribution(NUM_PARTICLES);//randomDistribution(NUM_PARTICLES);
 }
 
 function pf_loop() {
-	runFilter({dist: readDistSensors()[0], theta: -Math.PI/3});
-	runFilter({dist: readDistSensors()[1], theta: 0});
-	runFilter({dist: readDistSensors()[2], theta: Math.PI/3});
+	//runFilter({dist: readDistSensors()[0], theta: -Math.PI/3});
+	runFilter({dist: readDistSensors()[1], theta: robotState.mid_sensor_angle});
+	//runFilter({dist: readDistSensors()[2], theta: Math.PI/3});
 }
 
 function runFilter(reading) {
@@ -87,8 +87,8 @@ function transition() {
 		while(newParticle == null || !stateIsValid(newParticle)) {
 			newParticle = createNewState(
 							particleList[i],
-							Math.random()*20-10,
-							Math.random()*Math.PI/5 - Math.PI/10
+							Math.random()*40-20,
+							Math.random()*Math.PI/3 - Math.PI/6
 							);
 		}
 		particleList[i] = newParticle;
@@ -99,8 +99,8 @@ function centeredDistribution(num) {
 	var list = [];
 	for(var i = 0; i < num; i++) {
 		var particle = createState(
-							CANVAS_WIDTH/2,
-							CANVAS_HEIGHT/2,
+							(400*Math.random()-200)+CANVAS_WIDTH/2,
+							(400*Math.random()-200)+CANVAS_HEIGHT/2,
 							Math.random()*2*Math.PI
 							);
 		list.push(particle);

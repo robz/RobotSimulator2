@@ -6,7 +6,7 @@ var APP_WIDTH = 1000, APP_HEIGHT = 650, CANVAS_WIDTH = 540, CANVAS_HEIGHT = 640,
 	
 var obstacles, blackTape, particleVectors, defaultCode;
 
-var lineFollowerOn, wallFollowerOn, customOn, pf_state = 0, firstPerson;
+var lineFollowerOn, wallFollowerOn, customOn, pf_state = 2, firstPerson;
 
 var defaultTabNum = 0;
 
@@ -201,10 +201,12 @@ function updateState() {
 	
 	if (vel1 != 0 || vel2 != 0) {
 		robotState.updatePos(vel1*3, vel2*3, obstacles);
-		robotState.updateDistSensor(obstacles);
 		if(blackTape)
 			robotState.updateLineSensor(blackTape);
 	}
+	
+	robotState.mid_sensor_angle += Math.PI/20;
+	robotState.updateDistSensor(obstacles);
 	
 	//var end = new Date().getTime();
 	//console.log(end-start);

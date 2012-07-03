@@ -21,6 +21,7 @@ function makeState(xs, ys, thetas, ds) {
 		distSensor: [{theta:0, dist:0, p:null},
 			{theta:0, dist:0, p:null},
 			{theta:0, dist:0, p:null}],
+		mid_sensor_angle: 0,
 		
 		updatePos: function(w1, w2, obstPolys) {
 			var x2 = this.x, y2 = this.y, theta2 = this.theta, 
@@ -236,7 +237,7 @@ function makeState(xs, ys, thetas, ds) {
 				htheta = this.theta;
 			
 			var hpoint = {x:hx, y:hy};
-			var thetaDifs = [-PI/3.0, 0, PI/3.0];
+			var thetaDifs = [-PI/3.0, this.mid_sensor_angle, PI/3.0];
 			for(var k = 0; k < 3; k++) {
 				this.distSensor[k].theta = htheta+thetaDifs[k];
 				var vline = createLineFromVector(hpoint, htheta+thetaDifs[k]);
