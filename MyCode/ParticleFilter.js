@@ -2,7 +2,7 @@
 This is a basic particle filter for localization.
 */
 
-var NUM_PARTICLES = 600;
+var NUM_PARTICLES = 400;
 var particleList, obstacleList;
 
 function pf_main() {
@@ -11,9 +11,7 @@ function pf_main() {
 }
 
 function pf_loop() {
-	//runFilter({dist: readDistSensors()[0], theta: -Math.PI/3});
 	runFilter({dist: readDistSensors()[1], theta: robotState.mid_sensor_angle});
-	//runFilter({dist: readDistSensors()[2], theta: Math.PI/3});
 }
 
 function runFilter(reading) {
@@ -25,17 +23,19 @@ function runFilter(reading) {
 	if(pf_state == 2) {
 		paintParticleList2(particleList);
 	} else if (pf_state == 1) {
-		var totals = [0,0,0];
+		var totals = {x:0,y:0,vx:0,vy:0};
 		for(var i = 0; i < particleList.length; i++) {
 			var p = particleList[i];
-			totals[0] += p.p.x;
-			totals[1] += p.p.y;
-			totals[2] += p.theta;
+			totals.x += p.p.x;
+			totals.y += p.p.y;
+			totals.vx += Math.cos(p.theta);
+			totals.vy += Math.sin(p.theta);
 		}
 		var aveParticle = [
-				totals[0]/particleList.length,
-				totals[1]/particleList.length,
-				totals[2]/particleList.length
+				totals.x/particleList.length,
+				totals.y/particleList.length,
+				my_atan(totals.vy/particleList.length, 
+						totals.vx/particleList.length) 
 				];
 		setParticleList([aveParticle]);
 	} else if (pf_state == 0) {
@@ -139,7 +139,6 @@ function weightFunct(dif) {
 
 function createNewState(old,r,theta) {
 	var newTheta = cutAngle(old.theta+theta);
-	
 	return {p:{x:old.p.x+r*Math.cos(newTheta),y:old.p.y+r*Math.sin(newTheta)}, theta:newTheta};
 }
 
@@ -149,4 +148,15 @@ function createState(x,y,theta) {
 
 function stateIsValid(state) {
 	return state.p.x > 0 && state.p.x < CANVAS_WIDTH && state.p.y > 0 && state.p.y < CANVAS_HEIGHT;
+}
+
+function my_atan(y, x) {
+	if (x == 0) {
+		if (y > 0) return PI/2;
+		else if (y < 0) return -PI/2;
+		else if (y == 0) return 0;
+	}
+	if (x < 0) 
+		return Math.atan(y/x)+Math.PI;
+	return Math.atan(y/x);
 }

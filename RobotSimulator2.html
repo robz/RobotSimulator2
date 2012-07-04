@@ -124,7 +124,24 @@ function setParticleList(particles);
 // returns a list of obstacles on the field:
 //	[{ points:[{x:~,y:~},...], lines:[{m:~,b:~,v:~,p1:~,p2:~},...] }, ...]
 // where the points and lines are ordered clockwise around a given obstacle
-function getObstacleList();</textarea>
+function getObstacleList();
+
+// returns a list of obstacles on the field:
+//	[{ points:[{x:~,y:~},...], lines:[{m:~,b:~,v:~,p1:~,p2:~},...] }, ...]
+// where the points and lines are ordered clockwise around a given obstacle
+function getObstacleList();
+
+// returns distance till object from a point and angle
+//	or 'null' if there is no intersection
+//	expects state to be [x,y,theta]
+//	expects objects as in getObstacleList
+function getDistanceToObstacle(state, obstacles);
+
+// expends an array of 'particles', so for example:
+//	[{p:{x:~,y:~},theta:~},...]
+// once set, they will be draw as dots & lines in 
+//	black on the canvas.
+function paintParticleList2(particles);</textarea>
 		</div>
 		<div class="tablevel1 tabbertab" title="Examples">
 			<div class="tabber">

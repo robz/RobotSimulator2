@@ -223,7 +223,7 @@ function keyPressed(event) {
 	} else if (key == ' '.charCodeAt()) {
 		console.log("STOP!!!");
 		nvel1 = nvel2 = 0;
-		lineFollowerOn = wallFollowerOn = false;
+		lineFollowerOn = wallFollowerOn = customOn = false;
 	} else if(key == 'a'.charCodeAt() && !wallFollowerOn && !customOn) {
 		lineFollowerOn = !lineFollowerOn;
 		if (!lineFollowerOn) nvel1 = nvel2 = 0;
