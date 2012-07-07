@@ -1,0 +1,20 @@
+	
+	canvas.onmousedown = touch;
+}
+
+var touchPoints = [];
+
+function touch(event) {
+	touchPoints.push({x:event.offsetX,y:event.offsetY})
+	logPoints();
+}
+
+function logPoints() {
+	var str = "obstacles.push(createPolygon([", prefix = "";
+	for(var i = 0; i < touchPoints.length; i++) {
+		str += prefix+"{x:"+touchPoints[i].x+",y:"+touchPoints[i].y+"}";
+		prefix = ",";
+	}
+	str += "]));";
+	console.log(str);
+}

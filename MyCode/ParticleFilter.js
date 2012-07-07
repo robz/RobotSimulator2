@@ -2,12 +2,13 @@
 This is a basic particle filter for localization.
 */
 
-var NUM_PARTICLES = 400;
+var NUM_PARTICLES = 1000;
 var particleList, obstacleList;
 
 function pf_main() {
 	obstacleList = getObstacleList();
-	particleList = centeredDistribution(NUM_PARTICLES);//randomDistribution(NUM_PARTICLES);
+	particleList = centeredDistribution(NUM_PARTICLES, obstacleList);
+	//randomDistribution(NUM_PARTICLES, obstacleList);
 }
 
 function pf_loop() {
@@ -17,7 +18,7 @@ function pf_loop() {
 function runFilter(reading) {
 	assignWeights(reading, particleList, obstacleList);
 	particleList = resample(particleList, NUM_PARTICLES);
-	transition(particleList);
+	transition(obstacleList);
 	
 	//console.log(pf_state);
 	if(pf_state == 2) {
@@ -81,10 +82,10 @@ function assignWeights(reading, list, obstacles) {
 	}
 }
 
-function transition() {
+function transition(obstacles) {
 	for(var i = 0; i < particleList.length; i++) {
 		var newParticle = null;
-		while(newParticle == null || !stateIsValid(newParticle)) {
+		while(newParticle == null || !stateIsValid(newParticle, obstacles)) {
 			newParticle = createNewState(
 							particleList[i],
 							Math.random()*40-20,
@@ -95,24 +96,28 @@ function transition() {
 	}
 }
 
-function centeredDistribution(num) {
+function centeredDistribution(num, obstacles) {
 	var list = [];
 	for(var i = 0; i < num; i++) {
-		var particle = createState(
+		
+		var particle = null;
+		while(particle == null || !stateIsValid(particle, obstacles)) {
+			var particle = createState(
 							(400*Math.random()-200)+CANVAS_WIDTH/2,
 							(400*Math.random()-200)+CANVAS_HEIGHT/2,
 							Math.random()*2*Math.PI
 							);
+		}
 		list.push(particle);
 	}
 	return list;
 }
 
-function randomDistribution(num) {
+function randomDistribution(num, obstacles) {
 	var list = [];
 	for(var i = 0; i < num; i++) {
 		var particle = null;
-		while(particle == null || !stateIsValid(particle)) {
+		while(particle == null || !stateIsValid(particle, obstacles)) {
 			particle = createState(
 							Math.random()*CANVAS_WIDTH,
 							Math.random()*CANVAS_HEIGHT,
@@ -146,8 +151,15 @@ function createState(x,y,theta) {
 	return {p:{x:x,y:y}, theta:theta};
 }
 
-function stateIsValid(state) {
-	return state.p.x > 0 && state.p.x < CANVAS_WIDTH && state.p.y > 0 && state.p.y < CANVAS_HEIGHT;
+function stateIsValid(state, obstacles) {
+	if(!(state.p.x > 0 && state.p.x < CANVAS_WIDTH && state.p.y > 0 && state.p.y < CANVAS_HEIGHT))
+		return false;
+	for(var i = 0; i < obstacles.length; i++) {
+		if(pointInPoly(state.p, obstacles[i])) {
+			return false;
+		}
+	}
+	return true;
 }
 
 function my_atan(y, x) {

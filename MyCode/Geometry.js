@@ -15,6 +15,7 @@ Point = {
 Polygon = {
 	points: [array of points in clockwise order],
 	lines: [array of lines in clockwise order]
+	com: point representing center of mass
 }
 
 Circle = {
@@ -58,15 +59,21 @@ function createBox(xs,ys,ws,ls) {
 
 function createPolygon(ps) {
 	var ls = new Array(ps.length);
+	var sumx = 0, sumy = 0, total = ps.length;
 	
-	for(var i = 0; i < ps.length-1; i++) {
+	for(var i = 0; i < total-1; i++) {
+		sumx += ps[i].x;
+		sumy += ps[i].y;
 		ls[i] = createLine(ps[i], ps[i+1]);
 	}
-	ls[ps.length-1] = createLine(ps[ps.length-1], ps[0]);
+	ls[total-1] = createLine(ps[total-1], ps[0]);
+	sumx += ps[total-1].x;
+	sumy += ps[total-1].y;
 	
 	return {
 		lines:ls,
-		points:ps
+		points:ps,
+		com:{x:sumx/total,y:sumy/total}
 	};
 }
 
@@ -187,6 +194,33 @@ function onSegment(line, point) {
 	} else {
 		return point.x <= line.p2.x && point.x >= line.p1.x;
 	}
+}
+
+function pointInPoly(point, poly) {
+	for(var i = 0; i < poly.lines.length; i++) {
+		var comRel = pointLineRel(poly.com, poly.lines[i]),
+			pointRel = pointLineRel(point, poly.lines[i]);
+		if (pointRel != comRel && pointRel != 0) {
+			return false;
+		}
+	}
+	return true;
+}
+
+// return 1 if point is northwest of line,
+//	0 if point is on line,
+//	-1 if point is southeast of line
+function pointLineRel(point, line) {
+	if (line.v) {
+		return sign(line.p1.x - point.x);
+	}
+	return sign(point.y - (line.m*point.x+line.b));
+}
+
+function sign(val) {
+	if (val > 0) return 1;
+	else if (val < 0) return -1;
+	return 0;
 }
 
 function euclidDist(p1, p2) {
