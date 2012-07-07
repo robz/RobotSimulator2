@@ -3,11 +3,13 @@ This is a basic particle filter for localization.
 */
 
 var NUM_PARTICLES = 1000;
-var particleList, obstacleList;
+var numAveParticles = 5;
+var particleList, obstacleList, oldAveParticles;
 
 function pf_main() {
 	obstacleList = getObstacleList();
 	particleList = centeredDistribution(NUM_PARTICLES, obstacleList);
+	oldAveParticles = [];
 	//randomDistribution(NUM_PARTICLES, obstacleList);
 }
 
@@ -24,23 +26,9 @@ function runFilter(reading) {
 	if(pf_state == 2) {
 		paintParticleList2(particleList);
 	} else if (pf_state == 1) {
-		var totals = {x:0,y:0,vx:0,vy:0};
-		for(var i = 0; i < particleList.length; i++) {
-			var p = particleList[i];
-			totals.x += p.p.x;
-			totals.y += p.p.y;
-			totals.vx += Math.cos(p.theta);
-			totals.vy += Math.sin(p.theta);
-		}
-		var aveParticle = [
-				totals.x/particleList.length,
-				totals.y/particleList.length,
-				my_atan(totals.vy/particleList.length, 
-						totals.vx/particleList.length) 
-				];
-		setParticleList([aveParticle]);
+		paintParticleList2([getCurAveParticle(particleList)]);
 	} else if (pf_state == 0) {
-		setParticleList([]);
+		paintParticleList2([]);
 	}
 }
 
@@ -130,6 +118,32 @@ function randomDistribution(num, obstacles) {
 }
 
 /* utility functions */
+
+function getCurAveParticle(particleList) {
+	var curAve = getAverageParticle(particleList);
+	oldAveParticles.push(curAve);
+	if(numAveParticles == 0)
+		oldAveParticles.shift();
+	else
+		numAveParticles--;
+	return getAverageParticle(oldAveParticles);
+}
+
+function getAverageParticle(particleList) {
+	var totals = {x:0,y:0,vx:0,vy:0}, size = 0;
+	for(var i = 0; i < particleList.length; i++) {
+		var p = particleList[i];
+		if(p != undefined && p != null) {
+			totals.x += p.p.x;
+			totals.y += p.p.y;
+			totals.vx += Math.cos(p.theta);
+			totals.vy += Math.sin(p.theta);
+			size++;
+		}
+	}
+	return { p: {x:totals.x/size,y:totals.y/size},
+			 theta: my_atan(totals.vy/size,totals.vx/size) };
+}
 
 function cutAngle(angle) {
 	if(angle < 0)
