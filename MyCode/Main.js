@@ -4,9 +4,10 @@ var APP_WIDTH = 1000, APP_HEIGHT = 650, CANVAS_WIDTH = 540, CANVAS_HEIGHT = 640,
 	PI = Math.PI, V_INC = .1, VEL_MAX = 1, REPAINT_PERIOD = 50, WHEEL_WIDTH = 6, NUM_TREDS = 5, 
 	LINE_SENSOR_RADIUS = 2, BLACK_LINE_POINT_RADIUS = 1, DIST_SENSOR_MAX = 400;
 	
-var obstacles, blackTape, particleVectors, defaultCode;
+var obstacles, blackTape, particleVectors, defaultCode, gdo;
 
-var lineFollowerOn, wallFollowerOn, customOn, pf_state = 2, firstPerson;
+var lineFollowerOn, wallFollowerOn, customOn, pf_state = 2, firstPerson,
+	blockDividers = 8;
 
 var defaultTabNum = 0;
 
@@ -59,6 +60,9 @@ window.onload = function() {
 	robotState = makeState(CANVAS_WIDTH/2, CANVAS_HEIGHT/2, Math.random()*2*PI, ROBOT_DIM);
 	baseState = {x:CANVAS_WIDTH/2, y:CANVAS_HEIGHT/2, theta:PI*3/2};
 	createObstacles();
+	
+	// get optimizers
+	gdo = makeGDO(obstacles, CANVAS_WIDTH, CANVAS_HEIGHT, blockDividers);
 	
 	// kick off sensors
 	robotState.updateDistSensor(obstacles);
@@ -200,6 +204,7 @@ function repaint() {
 	ctx.fillStyle = "lightblue";
 	ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 	
+	/*
 	if(blackTape)
 		drawBlackTape(ctx, blackTape);
 	drawObstacles(ctx, obstacles);	
@@ -210,6 +215,8 @@ function repaint() {
 		drawVectors(ctx, particleVectors);
 	drawDistSensor(ctx, robotState);
 	drawStateInfo(ctx, robotState);
+	*/
+	drawGDO(ctx, gdo);
 	
 	//var end = new Date().getTime();
 	//console.log(end-start);

@@ -141,3 +141,63 @@ function drawStateInfo(g2, state) {
 	g2.fillText("show tracking:  t", CANVAS_WIDTH-180, 160);
 	g2.fillText("stop: space", CANVAS_WIDTH-180, 180);
 }
+
+function drawGDO(g2, gdo) {
+	for(var r = 0; r < gdo.divider; r++) {
+		for(var c = 0; c < gdo.divider; c++) {
+			drawLines(g2, gdo.edgeBlocks[r][c].edges);
+		}
+	}
+}
+
+function drawLines(g2, lines) {
+	g2.strokeStyle = "darkGray";
+	g2.lineWidth = 2;
+	for(var i = 0; i < lines.length; i++) {
+		g2.beginPath();
+		g2.moveTo(lines[i].p1.x, lines[i].p1.y);
+		g2.lineTo(lines[i].p2.x, lines[i].p2.y);
+		g2.stroke();
+	}	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
