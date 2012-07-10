@@ -78,11 +78,11 @@ window.onload = function() {
 	setInterval("repaint();", 60);
 	
 	// initialize sub programs
-	initProg("particle filter", pf_main, pf_loop, function() { return true;}, 100);
-	initProg("line follower", ls_main, ls_loop, function() { return lineFollowerOn;}, 100);
-	initProg("wall follower", wf_main, wf_loop, function() { return wallFollowerOn;}, 100);
-	initProg("custom program", cp_main, function() { cp_loop(); }, 
-		function() { return customOn; }, 100);
+	//initProg("particle filter", pf_main, pf_loop, function() { return true;}, 100);
+	//initProg("line follower", ls_main, ls_loop, function() { return lineFollowerOn;}, 100);
+	//initProg("wall follower", wf_main, wf_loop, function() { return wallFollowerOn;}, 100);
+	//initProg("custom program", cp_main, function() { cp_loop(); }, 
+	//	function() { return customOn; }, 100);
 
 	canvas.onmousedown = touch;
 }
@@ -203,19 +203,20 @@ function repaint() {
 	// clear the background
 	ctx.fillStyle = "lightblue";
 	ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
-	
+
 	/*
 	if(blackTape)
 		drawBlackTape(ctx, blackTape);
 	drawObstacles(ctx, obstacles);	
 	if (particleVectors.length > 1)
 		drawVectors(ctx, particleVectors);
+	*/
 	drawRobot(ctx, robotState);
 	if (particleVectors.length == 1)
 		drawVectors(ctx, particleVectors);
 	drawDistSensor(ctx, robotState);
 	drawStateInfo(ctx, robotState);
-	*/
+	
 	drawGDO(ctx, gdo);
 	
 	//var end = new Date().getTime();

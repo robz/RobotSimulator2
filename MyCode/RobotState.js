@@ -241,7 +241,8 @@ function makeState(xs, ys, thetas, ds) {
 			for(var k = 0; k < 3; k++) {
 				this.distSensor[k].theta = htheta+thetaDifs[k];
 				var vline = createLineFromVector(hpoint, htheta+thetaDifs[k]);
-			
+				
+				/*
 				var intersectList = [];
 				for(var i = 0; i < obstPolys.length; i++) {
 					var lines = obstPolys[i].lines;
@@ -262,6 +263,10 @@ function makeState(xs, ys, thetas, ds) {
 						closestPoint = intersectList[i];
 					}
 				}
+				*/
+				
+				var closestPoint = gdo.getDist({p:hpoint,theta:this.distSensor[k].theta}, null);
+				var minDist = euclidDist(hpoint, closestPoint);
 			
 				if (closestPoint != null) {
 					this.distSensor[k].dist = minDist;

@@ -57,6 +57,7 @@ function getObstacleList() {
 //	expects state to be [x,y,theta]
 //	expects objects as in getObstacleList
 function getDistanceToObstacle(state, obstacles) {
+	var x = noexistant();
 	var statePoint = {x:state[0],y:state[1]};
 	var stateLine = createLineFromVector(statePoint, state[2]);
 	
