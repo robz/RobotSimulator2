@@ -8,13 +8,13 @@ function wf_main() {
 function wf_loop() {
 	var leftDist = readDistSensors()[0];
 	
-	var normal = leftDist-100;
+	var normal = leftDist-80;
 	if (normal < -10) {
 		wfpow1 = .4;
 		wfpow2 = -.4;
 	} else if (normal > 10) {
 		wfpow1 = .4;
-		wfpow2 = .6;
+		wfpow2 = .8;
 	} else {
 		wfpow1 = .8;
 		wfpow2 = .8;

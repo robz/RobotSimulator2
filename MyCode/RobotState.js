@@ -242,29 +242,6 @@ function makeState(xs, ys, thetas, ds) {
 				this.distSensor[k].theta = htheta+thetaDifs[k];
 				var vline = createLineFromVector(hpoint, htheta+thetaDifs[k]);
 				
-				/*
-				var intersectList = [];
-				for(var i = 0; i < obstPolys.length; i++) {
-					var lines = obstPolys[i].lines;
-					for(var j = 0; j < lines.length; j++) {
-						var pline = lines[j];
-						var intersectPoint = getLineIntersection(pline, vline);
-						if(intersectPoint != false)
-							intersectList.push(intersectPoint);
-					}
-				}
-			
-				var minDist = DIST_SENSOR_MAX;
-				var closestPoint = null;
-				for(var i = 0; i < intersectList.length; i++) {
-					var d = euclidDist(hpoint, intersectList[i]);
-					if (d < minDist) {
-						minDist = d;
-						closestPoint = intersectList[i];
-					}
-				}
-				*/
-				
 				var minDist = DIST_SENSOR_MAX;
 				var closestPoint = gdo.getDist({p:hpoint,theta:this.distSensor[k].theta}, minDist);
 			

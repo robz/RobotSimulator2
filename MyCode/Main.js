@@ -79,12 +79,9 @@ window.onload = function() {
 	
 	// initialize sub programs
 	initProg("particle filter", pf_main, pf_loop, function() { return true;}, 100);
-	
-	
 	initProg("line follower", ls_main, ls_loop, function() { return lineFollowerOn;}, 100);
 	initProg("wall follower", wf_main, wf_loop, function() { return wallFollowerOn;}, 100);
 	initProg("custom program", cp_main, function() { cp_loop(); }, 	function() { return customOn; }, 100);
-	
 
 	canvas.onmousedown = touch;
 }
@@ -209,6 +206,7 @@ function repaint() {
 	if(blackTape)
 		drawBlackTape(ctx, blackTape);
 	drawObstacles(ctx, obstacles);	
+	drawGDO(ctx, gdo);
 	if (particleVectors.length > 1)
 		drawVectors(ctx, particleVectors);
 	drawRobot(ctx, robotState);
@@ -217,7 +215,6 @@ function repaint() {
 	drawDistSensor(ctx, robotState);
 	drawStateInfo(ctx, robotState);
 	
-	drawGDO(ctx, gdo);
 	
 	//var end = new Date().getTime();
 	//console.log(end-start);
@@ -245,42 +242,54 @@ function keyPressed(event) {
 	
 	var nvel1 = vel1, nvel2 = vel2;
 	
-	if (key == 'g'.charCodeAt()) {
+	if (key == 'e'.charCodeAt()) {
 		firstPerson = !firstPerson;
 	} else if (key == ' '.charCodeAt()) {
 		console.log("STOP!!!");
 		nvel1 = nvel2 = 0;
 		lineFollowerOn = wallFollowerOn = customOn = false;
-	} else if(key == 'a'.charCodeAt() && !wallFollowerOn && !customOn) {
+	} else if(key == 'z'.charCodeAt() && !wallFollowerOn && !customOn) {
 		lineFollowerOn = !lineFollowerOn;
 		if (!lineFollowerOn) nvel1 = nvel2 = 0;
-	} else if(key == 's'.charCodeAt() && !lineFollowerOn && !customOn) {
+	} else if(key == 'x'.charCodeAt() && !lineFollowerOn && !customOn) {
 		wallFollowerOn = !wallFollowerOn;
 		if (!wallFollowerOn) nvel1 = nvel2 = 0;
-	} else if(key == 'w'.charCodeAt() && !lineFollowerOn && !wallFollowerOn) {
+	} else if(key == 'c'.charCodeAt() && !lineFollowerOn && !wallFollowerOn) {
 		customOn = !customOn;
 		if (!customOn) nvel1 = nvel2 = 0;
 		else cp_main();
-	} else if(key == 't'.charCodeAt()) {
+	} else if(key == 'q'.charCodeAt()) {
 		pf_state = pf_state+1;
 		if (pf_state == 3) pf_state = 0;
 	} else if(lineFollowerOn || wallFollowerOn || customOn) {
 		// grabbing the input so the normal control don't mess
 		//	with the programs.
-	} else if(key == 'f'.charCodeAt()) {
-		nvel1 = vel1-V_INC;
-		if (nvel1 < -VEL_MAX)
-			nvel1 = -VEL_MAX;
-	} else if (key == 'r'.charCodeAt()) {
+	} else if(key == 'w'.charCodeAt()) {
 		nvel1 = vel1+V_INC;
+		nvel2 = vel2+V_INC;
 		if (nvel1 > VEL_MAX)
 			nvel1 = VEL_MAX;
-	} else if (key == 'd'.charCodeAt()) {
+		if (nvel2 > VEL_MAX)
+			nvel2 = VEL_MAX;
+	} else if (key == 'a'.charCodeAt()) {
+		nvel1 = vel1+V_INC;
 		nvel2 = vel2-V_INC;
+		if (nvel1 > VEL_MAX)
+			nvel1 = VEL_MAX;
 		if (nvel2 < -VEL_MAX)
 			nvel2 = -VEL_MAX;
-	} else if (key == 'e'.charCodeAt()) {
+	} else if (key == 's'.charCodeAt()) {
+		nvel1 = vel1-V_INC;
+		nvel2 = vel2-V_INC;
+		if (nvel1 < -VEL_MAX)
+			nvel1 = -VEL_MAX;
+		if (nvel2 < -VEL_MAX)
+			nvel2 = -VEL_MAX;
+	} else if (key == 'd'.charCodeAt()) {
+		nvel1 = vel1-V_INC;
 		nvel2 = vel2+V_INC;
+		if (nvel1 < -VEL_MAX)
+			nvel1 = -VEL_MAX;
 		if (nvel2 > VEL_MAX)
 			nvel2 = VEL_MAX;
 	} 
@@ -310,6 +319,7 @@ function loadCustom() {
 
 function createObstacles() {
 	obstacles = [];
+	
 	obstacles.push(createBox(0,0,5,CANVAS_HEIGHT));
 	obstacles.push(createBox(CANVAS_WIDTH-5,0,5,CANVAS_HEIGHT));
 	obstacles.push(createBox(0,0,CANVAS_WIDTH,5));
@@ -322,7 +332,7 @@ function createObstacles() {
 	obstacles.push(createPolygon([{x:535,y:144},{x:498,y:174},{x:490,y:321},{x:511,y:452},
 		{x:535,y:467}]));
 	obstacles.push(createPolygon([{x:5,y:551},{x:43,y:550},{x:82,y:584},{x:81,y:637},{x:5,y:637}]));
-	obstacles.push(createPolygon([{x:538,y:541},{x:492,y:540},{x:444,y:562},{x:401,y:592},
+	obstacles.push(createPolygon([{x:538,y:549},{x:492,y:540},{x:444,y:562},{x:401,y:592},
 		{x:375,y:637},{x:537,y:637}]));
 	
 	obstacles.push(createPolygon([{x:206,y:248},{x:296,y:244},{x:388,y:225},{x:362,y:153},
@@ -330,7 +340,7 @@ function createObstacles() {
 	obstacles.push(createPolygon([{x:180,y:340},{x:119,y:331},{x:114,y:365},{x:122,y:444},
 		{x:164,y:504},{x:203,y:504},{x:233,y:486},{x:228,y:414}]));
 	obstacles.push(createPolygon([{x:383,y:351},{x:339,y:358},{x:287,y:377},{x:288,y:459},
-		{x:314,y:510},{x:362,y:513},{x:390,y:454}]));
+		{x:314,y:510},{x:352,y:503},{x:390,y:454}]));
 }
 
 
