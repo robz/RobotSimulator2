@@ -2,13 +2,13 @@
 This is a basic particle filter for localization.
 */
 
-var NUM_PARTICLES = 1000;
+var NUM_PARTICLES = 2000;
 var numAveParticles = 5;
 var particleList, obstacleList, oldAveParticles;
 
 function pf_main() {
 	obstacleList = getObstacleList();
-	particleList = centeredDistribution(NUM_PARTICLES, obstacleList);
+	particleList = randomDistribution(NUM_PARTICLES, obstacleList);
 	oldAveParticles = [];
 	//randomDistribution(NUM_PARTICLES, obstacleList);
 }
@@ -168,11 +168,13 @@ function createState(x,y,theta) {
 function stateIsValid(state, obstacles) {
 	if(!(state.p.x > 0 && state.p.x < CANVAS_WIDTH && state.p.y > 0 && state.p.y < CANVAS_HEIGHT))
 		return false;
+	/*
 	for(var i = 0; i < obstacles.length; i++) {
 		if(pointInPoly(state.p, obstacles[i])) {
 			return false;
 		}
 	}
+	*/
 	return true;
 }
 

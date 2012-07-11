@@ -6,8 +6,8 @@ var APP_WIDTH = 1000, APP_HEIGHT = 650, CANVAS_WIDTH = 540, CANVAS_HEIGHT = 640,
 	
 var obstacles, blackTape, particleVectors, defaultCode, gdo;
 
-var lineFollowerOn, wallFollowerOn, customOn, pf_state = 2, firstPerson,
-	blockDividers = 8;
+var lineFollowerOn, wallFollowerOn, customOn, pf_state = 1, firstPerson,
+	blockDividers = 16;
 
 var defaultTabNum = 0;
 
@@ -78,11 +78,13 @@ window.onload = function() {
 	setInterval("repaint();", 60);
 	
 	// initialize sub programs
-	//initProg("particle filter", pf_main, pf_loop, function() { return true;}, 100);
-	//initProg("line follower", ls_main, ls_loop, function() { return lineFollowerOn;}, 100);
-	//initProg("wall follower", wf_main, wf_loop, function() { return wallFollowerOn;}, 100);
-	//initProg("custom program", cp_main, function() { cp_loop(); }, 
-	//	function() { return customOn; }, 100);
+	initProg("particle filter", pf_main, pf_loop, function() { return true;}, 100);
+	
+	
+	initProg("line follower", ls_main, ls_loop, function() { return lineFollowerOn;}, 100);
+	initProg("wall follower", wf_main, wf_loop, function() { return wallFollowerOn;}, 100);
+	initProg("custom program", cp_main, function() { cp_loop(); }, 	function() { return customOn; }, 100);
+	
 
 	canvas.onmousedown = touch;
 }
@@ -204,13 +206,11 @@ function repaint() {
 	ctx.fillStyle = "lightblue";
 	ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 
-	/*
 	if(blackTape)
 		drawBlackTape(ctx, blackTape);
 	drawObstacles(ctx, obstacles);	
 	if (particleVectors.length > 1)
 		drawVectors(ctx, particleVectors);
-	*/
 	drawRobot(ctx, robotState);
 	if (particleVectors.length == 1)
 		drawVectors(ctx, particleVectors);

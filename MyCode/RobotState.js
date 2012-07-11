@@ -265,10 +265,11 @@ function makeState(xs, ys, thetas, ds) {
 				}
 				*/
 				
-				var closestPoint = gdo.getDist({p:hpoint,theta:this.distSensor[k].theta}, null);
-				var minDist = euclidDist(hpoint, closestPoint);
+				var minDist = DIST_SENSOR_MAX;
+				var closestPoint = gdo.getDist({p:hpoint,theta:this.distSensor[k].theta}, minDist);
 			
 				if (closestPoint != null) {
+					var minDist = euclidDist(hpoint, closestPoint);
 					this.distSensor[k].dist = minDist;
 					this.distSensor[k].p = closestPoint;
 				} else {

@@ -57,10 +57,18 @@ function getObstacleList() {
 //	expects state to be [x,y,theta]
 //	expects objects as in getObstacleList
 function getDistanceToObstacle(state, obstacles) {
-	var x = noexistant();
 	var statePoint = {x:state[0],y:state[1]};
 	var stateLine = createLineFromVector(statePoint, state[2]);
 	
+	var minDist = DIST_SENSOR_MAX;
+	var closestPoint = gdo.getDist({p:statePoint,theta:state[2]}, minDist);
+
+	if (closestPoint != null) {
+		return euclidDist(statePoint, closestPoint);
+	} else {
+		return minDist;
+	}
+	/*
 	var intersectList = [];
 	for(var i = 0; i < obstacles.length; i++) {
 		var lines = obstacles[i].lines;
@@ -86,6 +94,7 @@ function getDistanceToObstacle(state, obstacles) {
 	} else {
 		return null;
 	}
+	*/
 }
 
 // expends an array of 'particles', so for example:

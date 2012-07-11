@@ -1,9 +1,9 @@
 /*
-	EdgeBlock: {edges:[line,..], row, col, tlcPoint:{x,y}, width, height, poly}
-		tlc = top left corner
-		poly = polygon representing box that square occupies
+This optimizer works by preprocessing the static obstacles. It divides the world into
+a grid, and creates a list of edges (sides of obstacles) associated with each square in 
+the grid. When determining distance, only the edges in the relevent squares are considered 
+for intersection comparison.
 */
-
 
 function makeGDO(obstacles, boardWidth, boardHeight, divider) {
 	var squares = makeEdgeSquares(obstacles, boardWidth, boardHeight, divider);
@@ -18,12 +18,12 @@ function makeGDO(obstacles, boardWidth, boardHeight, divider) {
 		
 		getDist: function(state, maxdist) {
 			state.theta = cutAngle(state.theta);
+			var stateLine = createLineFromVector(state.p, state.theta);
 			var state_square = {state:state, square:this.getSquare(state.p)};
-			var point = state_square.state.p;
-			while(state_square != null) {
+			var point = null;
+			while(point == null && state_square != null) {
 				state_square.square.on = true;
-				// add in checks for edges
-				point = state_square.state.p;
+				point = checkSquare(state_square.square, stateLine, state.p, maxdist);
 				var info = moveToNextBorder(state_square);
 				state_square = this.toNextStateSquare( info, state_square);
 			}
@@ -53,12 +53,28 @@ function makeGDO(obstacles, boardWidth, boardHeight, divider) {
 	return gdo;
 }
 
-function checkBlock(square, stateLine) {
+function checkSquare(square, stateLine, statePoint, maxdist) {
+	var intersectionPoints = [];
 	for(var i = 0; i < square.edges.length; i++) {
-		var p = linesIntersect(square.edges[i], stateLine)
-		if(p != null)
-			return p;
+		var p = getLineIntersection(square.edges[i], stateLine)
+		if(p != false && p != null)
+			intersectionPoints.push(p);
 	}
+	
+	if (intersectionPoints.length == 0)
+		return null;
+	
+	var mindist = maxdist;
+	var closestPoint = null;
+	for(var i = 0; i < intersectionPoints.length; i++) {
+		var dist = euclidDist(statePoint, intersectionPoints[i]);
+		if(dist < mindist) {
+			mindist = dist;
+			closestPoint = intersectionPoints[i];
+		}
+	}
+	
+	return closestPoint;
 }
 
 var sideToDifs = {
@@ -68,75 +84,82 @@ var sideToDifs = {
 	3:{rdif:0, cdif:-1}
 };
 
+var gridThetaToResult = {
+	0: 	function(bx,by,bw,bh,sx,sy) { return {side:1, p:{x:bx+bw, y:sy}}; },
+	1: 	function(bx,by,bw,bh,sx,sy) { return {side:0, p:{x:sx, y:by+bh}}; },
+	2:	function(bx,by,bw,bh,sx,sy) { return {side:3, p:{x:bx, y:sy}}; },
+	3:	function(bx,by,bw,bh,sx,sy) { return {side:2, p:{x:sx, y:by}}; }
+};
+
+var nongridThetaToResult = {
+	0:	function thetaFunct1(bx, by, bw, bh, sx, sy, theta) {
+			var sw, sh, lh, lw, phi, result;
+			sw = bx + bw - sx;
+			sh = by + bh - sy;
+			phi = theta;
+			lh = sw*Math.tan(phi);
+			lw = sh/Math.tan(phi);
+			if (lw <= sw) {
+				result = {side:0, p:{x:sx+lw, y:sy+sh}};
+			} else if (lh <= sh) {
+				result = {side:1, p:{x:sx+sw, y:sy+lh}};
+			} 
+			return result;
+		},
+	1:	function thetaFunct2(bx, by, bw, bh, sx, sy, theta) {
+			var sw, sh, lh, lw, phi, result;
+			sw = sx - bx;
+			sh = by + bh - sy;
+			phi = PI - theta;
+			lh = sw*Math.tan(phi);
+			lw = sh/Math.tan(phi);
+			if (lw <= sw) {
+				result = {side:0, p:{x:sx-lw, y:sy+sh}};
+			} else if (lh <= sh) {
+				result = {side:3, p:{x:sx-sw, y:sy+lh}};
+			} 
+			return result;
+		},
+	2:	function thetaFunct3(bx, by, bw, bh, sx, sy, theta) {
+			var sw, sh, lh, lw, phi, result;
+			sw = sx - bx;
+			sh = sy - by;
+			phi = theta - PI;
+			lh = sw*Math.tan(phi);
+			lw = sh/Math.tan(phi);
+			if (lw <= sw) {
+				result = {side:2, p:{x:sx-lw, y:sy-sh}};
+			} else if (lh <= sh) {
+				result = {side:3, p:{x:sx-sw, y:sy-lh}};
+			} 
+			return result;
+		},
+	3:	function(bx, by, bw, bh, sx, sy, theta) {
+			var sw, sh, lh, lw, phi, result;
+			sw = bx + bw - sx;
+			sh = sy - by;
+			phi = 2*PI - theta;
+			lh = sw*Math.tan(phi);
+			lw = sh/Math.tan(phi);
+			if (lw <= sw) {
+				result = {side:2, p:{x:sx+lw, y:sy-sh}};
+			} else if (lh <= sh) {
+				result = {side:1, p:{x:sx+sw, y:sy-lh}};
+			} 
+			return result;
+		}
+};
+
 function moveToNextBorder(state_square) {
 	var state = state_square.state, square = state_square.square;
 	var bx = square.bx, by = square.by, bh = square.bh, bw = square.bw,
 		sx = state.p.x, sy = state.p.y, theta = state.theta;
-	var result;
 
 	if (theta/(PI/2) == Math.floor(theta/(PI/2))) {
-		if(theta == 0) {
-			result = {side:1, p:{x:bx+bw, y:sy}};
-		} else if (theta == PI/2) {
-			result = {side:0, p:{x:sx, y:by+bh}};
-		} else if (theta == PI) {
-			result = {side:3, p:{x:bx, y:sy}};
-		} else if (theta == 3*PI/2) {
-			result = {side:2, p:{x:sx, y:by}};
-		} else {
-			console.log(theta);
-		}
+		return gridThetaToResult[theta/(PI/2)](bx,by,bw,bh,sx,sy);
 	} else {
-		var sw, sh, lh, lw, p1side, p2side, phi, 
-			xsign, ysign;
-	
-		if (theta > 0 && theta < PI/2) {
-			sw = bx + bw - sx;
-			sh = by + bh - sy;
-			phi = theta;
-			p1side = 0;
-			p2side = 1;
-			xsign = 1;
-			ysign = 1;
-		} else if (theta > PI/2 && theta < PI) {
-			sw = sx - bx;
-			sh = by + bh - sy;
-			phi = PI - theta;
-			p1side = 0;
-			p2side = 3;
-			xsign = -1;
-			ysign = 1;
-		} else if (theta > PI && theta < 3*PI/2) {
-			sw = sx - bx;
-			sh = sy - by;
-			phi = theta - PI;
-			p1side = 2;
-			p2side = 3;
-			xsign = -1;
-			ysign = -1;
-		} else if (theta > 3*PI/2 && theta < 2*PI) {
-			sw = bx + bw - sx;
-			sh = sy - by;
-			phi = 2*PI - theta;
-			p1side = 2;
-			p2side = 1;
-			lh = sw*Math.tan(phi);
-			lw = sh/Math.tan(phi);
-			xsign = 1;
-			ysign = -1;
-		}
-		
-		lh = sw*Math.tan(phi);
-		lw = sh/Math.tan(phi);
-		
-		if (lw <= sw) {
-			result = {side:p1side, p:{x:sx+xsign*lw, y:sy+ysign*sh}};
-		} else if (lh <= sh) {
-			result = {side:p2side, p:{x:sx+xsign*sw, y:sy+ysign*lh}};
-		} 
+		return nongridThetaToResult[Math.floor(theta/(PI/2))](bx,by,bw,bh,sx,sy,theta);
 	}
-	
-	return result;
 }
 
 function makeEdgeSquares(obstacles, boardWidth, boardHeight, divider) {
