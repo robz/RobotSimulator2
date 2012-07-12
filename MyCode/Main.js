@@ -6,7 +6,7 @@ var APP_WIDTH = 1000, APP_HEIGHT = 650, CANVAS_WIDTH = 540, CANVAS_HEIGHT = 640,
 	
 var obstacles, blackTape, particleVectors, defaultCode, gdo;
 
-var lineFollowerOn, wallFollowerOn, customOn, pf_state = 1, firstPerson,
+var lineFollowerOn, wallFollowerOn, customOn, pf_state = 0, firstPerson,
 	blockDividers = 16;
 
 var defaultTabNum = 0;
@@ -206,7 +206,7 @@ function repaint() {
 	if(blackTape)
 		drawBlackTape(ctx, blackTape);
 	drawObstacles(ctx, obstacles);	
-	drawGDO(ctx, gdo);
+	//drawGDO(ctx, gdo);
 	if (particleVectors.length > 1)
 		drawVectors(ctx, particleVectors);
 	drawRobot(ctx, robotState);

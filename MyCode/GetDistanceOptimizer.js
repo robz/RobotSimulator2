@@ -20,14 +20,20 @@ function makeGDO(obstacles, boardWidth, boardHeight, divider) {
 			state.theta = cutAngle(state.theta);
 			var stateLine = createLineFromVector(state.p, state.theta);
 			var state_square = {state:state, square:this.getSquare(state.p)};
-			var point = null;
-			while(point == null && state_square != null) {
+			var closestPoint = null;
+			while(state_square != null) {
 				state_square.square.on = true;
 				point = checkSquare(state_square.square, stateLine, state.p, maxdist);
+				if (point != null) {
+					closestPoint = point;
+					maxdist = euclidDist(state.p, point);
+				}
 				var info = moveToNextBorder(state_square);
-				state_square = this.toNextStateSquare( info, state_square);
+				state_square = this.toNextStateSquare(info, state_square);
 			}
-			return point;
+			if(state_square != null)
+				state_square.square.on = true;
+			return closestPoint;
 		},
 		
 		getSquare: function(p) {
@@ -53,13 +59,15 @@ function makeGDO(obstacles, boardWidth, boardHeight, divider) {
 	return gdo;
 }
 
-function checkSquare(square, stateLine, statePoint, maxdist) {
+function checkSquare(square, stateLine, statePoint, maxdist, oldPoint) {
 	var intersectionPoints = [];
 	for(var i = 0; i < square.edges.length; i++) {
 		var p = getLineIntersection(square.edges[i], stateLine)
 		if(p != false && p != null)
 			intersectionPoints.push(p);
 	}
+	
+	//console.log(square.row+","+square.col+": "+intersectionPoints.length);
 	
 	if (intersectionPoints.length == 0)
 		return null;
@@ -171,15 +179,19 @@ function makeEdgeSquares(obstacles, boardWidth, boardHeight, divider) {
 		edgeSquares[r] = new Array(divider);
 		for(var c = 0; c < divider; c++) {
 			var square = makeSquare(r, c, squareWidth, squareHeight);
-			for(var i = 0; i < square.poly.lines.length; i++) {
-				for(var j = 0; j < obstacles.length; j++) {
-					for(var k = 0; k < obstacles[j].lines.length; k++) {
+			for(var j = 0; j < obstacles.length; j++) {
+				for(var k = 0; k < obstacles[j].lines.length; k++) {
+					var flag = false;
+					for(var i = 0; i < square.poly.lines.length; i++) {
 						if (linesIntersect(square.poly.lines[i], obstacles[j].lines[k])
-							|| (pointInPoly(obstacles[j].lines[k].p1, square.poly)
-								&& pointInPoly(obstacles[j].lines[k].p2, square.poly))) {
-							square.edges.push(obstacles[j].lines[k]);
+							|| ( pointInPoly(obstacles[j].lines[k].p1, square.poly)
+								&& pointInPoly(obstacles[j].lines[k].p2, square.poly) )) {
+							flag = true;
+							break;
 						}
 					}
+					if (flag) 
+						square.edges.push(obstacles[j].lines[k]);
 				}
 			}
 			edgeSquares[r][c] = square;

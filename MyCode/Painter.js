@@ -87,7 +87,7 @@ function drawDistSensor(g2, state) {
 	
 	g2.beginPath();
 	
-	for(var i = 0; i < 3; i++) {
+	for(var i = 1; i < 3; i+=2) {
 		g2.moveTo(cpoint[0], cpoint[1]);
 		g2.lineTo(state.distSensor[i].p.x, state.distSensor[i].p.y);
 	}
@@ -136,21 +136,44 @@ function drawStateInfo(g2, state) {
 
 function drawGDO(g2, gdo) {
 	for(var r = 0; r < gdo.divider; r++) {
+		drawLine(g2, {x:0, y:r*gdo.squareHeight}, {x:CANVAS_WIDTH, y:r*gdo.squareHeight});
+	}
+	
+	for(var c = 0; c < gdo.divider; c++) {
+		drawLine(g2, {x:c*gdo.squareWidth, y:0}, {x:c*gdo.squareWidth, y:CANVAS_HEIGHT});
+	}
+	
+	for(var r = 0; r < gdo.divider; r++) {
 		for(var c = 0; c < gdo.divider; c++) {
-			if(gdo.edgeSquares[r][c].on)
-				drawLines(g2, gdo.edgeSquares[r][c].edges);
+			if(gdo.edgeSquares[r][c].on) {
+				g2.fillStyle = "white";
+				g2.fillRect(c*gdo.squareWidth, r*gdo.squareHeight, gdo.squareWidth, gdo.squareHeight);
+				drawLines(g2, gdo.edgeSquares[r][c].edges, r*gdo.divider+c);
+			}
+			gdo.edgeSquares[r][c].on = false;
 		}
 	}
 }
 
-function drawLines(g2, lines) {
-	g2.strokeStyle = "darkGray";
-	g2.lineWidth = 2;
+function drawLine(g2, p1, p2) {
+	g2.beginPath();
+	g2.moveTo(p1.x, p1.y);
+	g2.lineTo(p2.x, p2.y);
+	g2.stroke();
+}
+
+function drawLines(g2, lines, squareNum) {
+	//g2.lineWidth = 2;
 	for(var i = 0; i < lines.length; i++) {
 		g2.beginPath();
 		g2.moveTo(lines[i].p1.x, lines[i].p1.y);
 		g2.lineTo(lines[i].p2.x, lines[i].p2.y);
 		g2.stroke();
+		/*
+		g2.font = "bold 1em courier new"; 
+		g2.fillText(squareNum+"-"+i, (lines[i].p1.x+lines[i].p2.x)/2, (lines[i].p1.y+lines[i].p2.y)/2);
+		g2.fill();
+		*/
 	}	
 }
 

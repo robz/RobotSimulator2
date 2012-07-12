@@ -2,7 +2,7 @@
 This is a basic particle filter for localization.
 */
 
-var NUM_PARTICLES = 2000;
+var NUM_PARTICLES = 1500;
 var numAveParticles = 5;
 var particleList, obstacleList, oldAveParticles;
 

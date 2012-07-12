@@ -238,7 +238,7 @@ function makeState(xs, ys, thetas, ds) {
 			
 			var hpoint = {x:hx, y:hy};
 			var thetaDifs = [-PI/3.0, this.mid_sensor_angle, PI/3.0];
-			for(var k = 0; k < 3; k++) {
+			for(var k = 1; k < 3; k+=2) {
 				this.distSensor[k].theta = htheta+thetaDifs[k];
 				var vline = createLineFromVector(hpoint, htheta+thetaDifs[k]);
 				
