@@ -87,12 +87,16 @@ function drawDistSensor(g2, state) {
 	
 	g2.beginPath();
 	
-	for(var i = 1; i < 3; i+=2) {
+	if (pf_state == 0) {
+		for(var i = 0; i < 3; i+=2) {
+			g2.moveTo(cpoint[0], cpoint[1]);
+			g2.lineTo(state.distSensor[i].p.x, state.distSensor[i].p.y);
+		}
+	} else {
 		g2.moveTo(cpoint[0], cpoint[1]);
-		g2.lineTo(state.distSensor[i].p.x, state.distSensor[i].p.y);
+		g2.lineTo(state.distSensor[1].p.x, state.distSensor[1].p.y);
 	}
 	
-	g2.closePath();
 	g2.stroke();
 }
 
@@ -163,17 +167,11 @@ function drawLine(g2, p1, p2) {
 }
 
 function drawLines(g2, lines, squareNum) {
-	//g2.lineWidth = 2;
 	for(var i = 0; i < lines.length; i++) {
 		g2.beginPath();
 		g2.moveTo(lines[i].p1.x, lines[i].p1.y);
 		g2.lineTo(lines[i].p2.x, lines[i].p2.y);
 		g2.stroke();
-		/*
-		g2.font = "bold 1em courier new"; 
-		g2.fillText(squareNum+"-"+i, (lines[i].p1.x+lines[i].p2.x)/2, (lines[i].p1.y+lines[i].p2.y)/2);
-		g2.fill();
-		*/
 	}	
 }
 

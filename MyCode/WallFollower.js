@@ -6,9 +6,10 @@ function wf_main() {
 }
 
 function wf_loop() {
-	var leftDist = readDistSensors()[0];
+	var leftDist = readDistSensors()[0],
+		rightDist = readDistSensors()[1];
 	
-	var normal = leftDist-80;
+	var normal = leftDist-rightDist;
 	if (normal < -10) {
 		wfpow1 = .4;
 		wfpow2 = -.4;

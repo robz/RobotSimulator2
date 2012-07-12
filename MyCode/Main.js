@@ -4,9 +4,8 @@ var APP_WIDTH = 1000, APP_HEIGHT = 650, CANVAS_WIDTH = 540, CANVAS_HEIGHT = 640,
 	PI = Math.PI, V_INC = .1, VEL_MAX = 1, REPAINT_PERIOD = 50, WHEEL_WIDTH = 6, NUM_TREDS = 5, 
 	LINE_SENSOR_RADIUS = 2, BLACK_LINE_POINT_RADIUS = 1, DIST_SENSOR_MAX = 400;
 	
-var obstacles, blackTape, particleVectors, defaultCode, gdo;
-
-var lineFollowerOn, wallFollowerOn, customOn, pf_state = 0, firstPerson,
+var obstacles, blackTape, particleVectors, defaultCode, gdo, arrReadings,
+	lineFollowerOn, wallFollowerOn, customOn, pf_state = 0, firstPerson,
 	blockDividers = 16;
 
 var defaultTabNum = 0;
@@ -74,8 +73,11 @@ window.onload = function() {
 	
 	// start state-updater and repainter
 	vel1 = vel2 = 0;
-	setInterval("updateState();", 60);
-	setInterval("repaint();", 60);
+	setInterval("updateState();", 30);
+	setInterval("repaint();", 30);
+	
+	// queue to store readings for particle filter
+	arrReadings = [];
 	
 	// initialize sub programs
 	initProg("particle filter", pf_main, pf_loop, function() { return true;}, 100);
@@ -193,8 +195,6 @@ function initProg(prog_name, prog_main, prog_loop, prog_cond, period) {
 }
 
 function repaint() {
-	//var start = new Date().getTime();
-	
 	var canvas = document.getElementById("canvas");
 	var context = canvas.getContext("2d");
 	var ctx = makeContextTramp(context, baseState, robotState, firstPerson);
@@ -214,26 +214,18 @@ function repaint() {
 		drawVectors(ctx, particleVectors);
 	drawDistSensor(ctx, robotState);
 	drawStateInfo(ctx, robotState);
-	
-	
-	//var end = new Date().getTime();
-	//console.log(end-start);
 }
 
 function updateState() {
-	//var start = new Date().getTime();
-	
 	if (vel1 != 0 || vel2 != 0) {
-		robotState.updatePos(vel1*3, vel2*3, obstacles);
+		robotState.updatePos(vel1*2, vel2*2, obstacles);
 		if(blackTape)
 			robotState.updateLineSensor(blackTape);
 	}
 	
-	robotState.mid_sensor_angle += Math.PI/20;
+	robotState.mid_sensor_angle += Math.PI/30;
 	robotState.updateDistSensor(obstacles);
-	
-	//var end = new Date().getTime();
-	//console.log(end-start);
+	arrReadings.push({dist: readDistSensors()[1], theta: robotState.mid_sensor_angle});
 }
 
 function keyPressed(event) {
@@ -315,6 +307,8 @@ function loadCustom() {
 	if(window["localStorage"]) {
 		localStorage.setItem("program", code);
 	}
+	
+	cp_main();
 }
 
 function createObstacles() {

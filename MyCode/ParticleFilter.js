@@ -2,23 +2,27 @@
 This is a basic particle filter for localization.
 */
 
-var NUM_PARTICLES = 1500;
+var NUM_PARTICLES = 500;
 var numAveParticles = 5;
 var particleList, obstacleList, oldAveParticles;
 
 function pf_main() {
 	obstacleList = getObstacleList();
-	particleList = randomDistribution(NUM_PARTICLES, obstacleList);
+	particleList = centeredDistribution(NUM_PARTICLES, obstacleList);
 	oldAveParticles = [];
 	//randomDistribution(NUM_PARTICLES, obstacleList);
 }
 
 function pf_loop() {
-	runFilter({dist: readDistSensors()[1], theta: robotState.mid_sensor_angle});
+	runFilter(arrReadings);
 }
 
-function runFilter(reading) {
-	assignWeights(reading, particleList, obstacleList);
+function runFilter(readings) {
+	clearWeights(particleList);
+	var len = readings.length;
+	for(var i = 0; i < len; i++)
+		assignWeights(readings.shift(), particleList, obstacleList);
+	normalizeWeights(particleList);
 	particleList = resample(particleList, NUM_PARTICLES);
 	transition(obstacleList);
 	
@@ -51,6 +55,12 @@ function resample(list, num) {
 	return newList;
 }
 
+function clearWeights(list) {
+	for(var i = 0; i < list.length; i++) {
+		list[i].weight = 0;
+	}
+}
+
 function assignWeights(reading, list, obstacles) {
 	var total = 0;
 	for(var i = 0; i < list.length; i++) {
@@ -60,13 +70,17 @@ function assignWeights(reading, list, obstacles) {
 						obstacles
 						);
 		var dif = Math.abs(actual - reading.dist);
-		list[i].weight = weightFunct(dif);
+		list[i].weight += weightFunct(dif);
+	}
+}
+
+function normalizeWeights(list) {
+	var total = 0;
+	for(var i = 0; i < list.length; i++) {
 		total += list[i].weight;
 	}
-	
-	// normalize
-	for(var i = 0; i < particleList.length; i++) {
-		particleList[i].weight = particleList[i].weight/total;
+	for(var i = 0; i < list.length; i++) {
+		list[i].weight = list[i].weight/total;
 	}
 }
 
@@ -87,7 +101,6 @@ function transition(obstacles) {
 function centeredDistribution(num, obstacles) {
 	var list = [];
 	for(var i = 0; i < num; i++) {
-		
 		var particle = null;
 		while(particle == null || !stateIsValid(particle, obstacles)) {
 			var particle = createState(
